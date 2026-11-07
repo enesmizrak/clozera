@@ -11,6 +11,7 @@ Open-source language learning app built around cloze-based practice.
 | UI | shadcn/ui on Base UI, Tailwind CSS v4, `@shadcn/lint` design-system rules |
 | Client state | TanStack DB/Query for server data, URL search params for navigation, Zustand for device preferences |
 | API | Express 5, Mongoose 9, Better Auth, Effect 4 for typed service errors |
+| Email | React Email templates, Resend in production, Mailpit locally |
 | Tooling | npm workspaces, Vite+ (build, Vitest, Oxlint, Oxfmt), Node 24 type stripping |
 
 See [doc/architecture.md](doc/architecture.md) for how the pieces fit together and why.
@@ -19,6 +20,7 @@ See [doc/architecture.md](doc/architecture.md) for how the pieces fit together a
 
 ```
 packages/shared   @clozera/shared: API contracts, Zod schemas, sentence helpers
+packages/emails   @clozera/emails: React Email templates for auth emails
 backend           @clozera/backend: REST API under /api, Better Auth under /api/auth
 frontend          @clozera/frontend: TanStack Start app; proxies /api to the backend
 tooling           Lint and format settings shared by every workspace
@@ -33,13 +35,18 @@ npm ci
 cp backend/.env.example backend/.env
 ```
 
-Start MongoDB, then the API and the web app in two terminals:
+Start MongoDB and Mailpit, then the API and the web app in two terminals:
 
 ```sh
-docker compose up -d mongodb
+docker compose up -d mongodb mailpit
 npm run dev:api
 npm run dev:web
 ```
+
+New accounts must confirm their email. With `EMAIL_TRANSPORT=smtp` and
+`SMTP_URL=smtp://localhost:1025` in `backend/.env`, emails arrive in Mailpit at
+http://localhost:8025; without them they are printed in the API terminal.
+`npm run dev:emails` opens the React Email template preview on http://localhost:3030.
 
 Open http://localhost:5173. The web app proxies `/api` to the API on port 3000, so the
 auth cookie is first-party and also available during server rendering.
@@ -78,13 +85,15 @@ the database volume.
 
 ## Upgrading existing installations
 
-Accounts created before Better Auth keep their passwords. Run the credential
-migration once per database; it is a dry run unless `--apply` is passed:
+Accounts created before Better Auth used weak PBKDF2 hashes, which are deleted rather
+than migrated. Run the migration once per database; it is a dry run unless `--apply`
+is passed. It marks those accounts' emails as verified, and `--notify` emails each
+learner a link to choose a new password:
 
 ```sh
 npm run auth:migrate-legacy -w backend
-npm run auth:migrate-legacy -w backend -- --apply
+npm run auth:migrate-legacy -w backend -- --apply --notify
 ```
 
-Existing sessions end with this upgrade, so everyone signs in again once.
-Production needs `BETTER_AUTH_SECRET`; see [doc/architecture.md](doc/architecture.md#deployment).
+Existing sessions end with this upgrade. Production needs `BETTER_AUTH_SECRET` and
+`RESEND_API_KEY`; see [doc/architecture.md](doc/architecture.md#deployment).

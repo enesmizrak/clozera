@@ -114,8 +114,9 @@ export async function resetLearnerData(): Promise<void> {
   const collections = [...libraries.values(), ...sentenceLists.values()]
   libraries.clear()
   sentenceLists.clear()
-  await Promise.all(collections.map(collection => collection.cleanup()))
-  getQueryClient().clear()
+  await Promise.all(collections.map(collection => collection.cleanup({ dependents: true })))
+  // Keep the (now signed-out) session entry; drop everything learner-specific.
+  getQueryClient().removeQueries({ predicate: query => query.queryKey[0] !== 'session' })
 }
 
 function libraryOf(collection: Pick<CollectionDto, 'languagePair'>): LibraryCollection {

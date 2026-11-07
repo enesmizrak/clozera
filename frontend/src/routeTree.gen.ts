@@ -12,8 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as GuestRouteImport } from './routes/_guest'
+import { Route as EmailChangedRouteImport } from './routes/email-changed'
+import { Route as EmailVerifiedRouteImport } from './routes/email-verified'
 import { Route as AppLanguagesRouteImport } from './routes/_app/languages'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as GuestCheckEmailRouteImport } from './routes/_guest/check-email'
+import { Route as GuestForgotPasswordRouteImport } from './routes/_guest/forgot-password'
 import { Route as GuestLoginRouteImport } from './routes/_guest/login'
+import { Route as GuestResetPasswordRouteImport } from './routes/_guest/reset-password'
 import { Route as GuestSignUpRouteImport } from './routes/_guest/sign-up'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
@@ -34,14 +40,44 @@ const GuestRoute = GuestRouteImport.update({
   id: '/_guest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmailChangedRoute = EmailChangedRouteImport.update({
+  id: '/email-changed',
+  path: '/email-changed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailVerifiedRoute = EmailVerifiedRouteImport.update({
+  id: '/email-verified',
+  path: '/email-verified',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppLanguagesRoute = AppLanguagesRouteImport.update({
   id: '/languages',
   path: '/languages',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const GuestCheckEmailRoute = GuestCheckEmailRouteImport.update({
+  id: '/check-email',
+  path: '/check-email',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestForgotPasswordRoute = GuestForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => GuestRoute,
+} as any)
 const GuestLoginRoute = GuestLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestResetPasswordRoute = GuestResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => GuestRoute,
 } as any)
 const GuestSignUpRoute = GuestSignUpRouteImport.update({
@@ -80,8 +116,14 @@ const AppDashboardCollectionsCollectionIdPracticeRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/email-changed': typeof EmailChangedRoute
+  '/email-verified': typeof EmailVerifiedRoute
   '/languages': typeof AppLanguagesRoute
+  '/settings': typeof AppSettingsRoute
+  '/check-email': typeof GuestCheckEmailRoute
+  '/forgot-password': typeof GuestForgotPasswordRoute
   '/login': typeof GuestLoginRoute
+  '/reset-password': typeof GuestResetPasswordRoute
   '/sign-up': typeof GuestSignUpRoute
   '/api/$': typeof ApiSplatRoute
   '/dashboard/': typeof AppDashboardIndexRoute
@@ -91,8 +133,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/email-changed': typeof EmailChangedRoute
+  '/email-verified': typeof EmailVerifiedRoute
   '/languages': typeof AppLanguagesRoute
+  '/settings': typeof AppSettingsRoute
+  '/check-email': typeof GuestCheckEmailRoute
+  '/forgot-password': typeof GuestForgotPasswordRoute
   '/login': typeof GuestLoginRoute
+  '/reset-password': typeof GuestResetPasswordRoute
   '/sign-up': typeof GuestSignUpRoute
   '/api/$': typeof ApiSplatRoute
   '/dashboard': typeof AppDashboardIndexRoute
@@ -104,8 +152,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_guest': typeof GuestRouteWithChildren
+  '/email-changed': typeof EmailChangedRoute
+  '/email-verified': typeof EmailVerifiedRoute
   '/_app/languages': typeof AppLanguagesRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_guest/check-email': typeof GuestCheckEmailRoute
+  '/_guest/forgot-password': typeof GuestForgotPasswordRoute
   '/_guest/login': typeof GuestLoginRoute
+  '/_guest/reset-password': typeof GuestResetPasswordRoute
   '/_guest/sign-up': typeof GuestSignUpRoute
   '/api/$': typeof ApiSplatRoute
   '/_app/dashboard/': typeof AppDashboardIndexRoute
@@ -117,8 +171,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/email-changed'
+    | '/email-verified'
     | '/languages'
+    | '/settings'
+    | '/check-email'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/sign-up'
     | '/api/$'
     | '/dashboard/'
@@ -128,8 +188,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/email-changed'
+    | '/email-verified'
     | '/languages'
+    | '/settings'
+    | '/check-email'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/sign-up'
     | '/api/$'
     | '/dashboard'
@@ -140,8 +206,14 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/_guest'
+    | '/email-changed'
+    | '/email-verified'
     | '/_app/languages'
+    | '/_app/settings'
+    | '/_guest/check-email'
+    | '/_guest/forgot-password'
     | '/_guest/login'
+    | '/_guest/reset-password'
     | '/_guest/sign-up'
     | '/api/$'
     | '/_app/dashboard/'
@@ -154,6 +226,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   GuestRoute: typeof GuestRouteWithChildren
+  EmailChangedRoute: typeof EmailChangedRoute
+  EmailVerifiedRoute: typeof EmailVerifiedRoute
   ApiSplatRoute: typeof ApiSplatRoute
 }
 
@@ -180,6 +254,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/email-changed': {
+      id: '/email-changed'
+      path: '/email-changed'
+      fullPath: '/email-changed'
+      preLoaderRoute: typeof EmailChangedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-verified': {
+      id: '/email-verified'
+      path: '/email-verified'
+      fullPath: '/email-verified'
+      preLoaderRoute: typeof EmailVerifiedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/languages': {
       id: '/_app/languages'
       path: '/languages'
@@ -187,11 +275,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLanguagesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_guest/check-email': {
+      id: '/_guest/check-email'
+      path: '/check-email'
+      fullPath: '/check-email'
+      preLoaderRoute: typeof GuestCheckEmailRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/forgot-password': {
+      id: '/_guest/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof GuestForgotPasswordRouteImport
+      parentRoute: typeof GuestRoute
+    }
     '/_guest/login': {
       id: '/_guest/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof GuestLoginRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/reset-password': {
+      id: '/_guest/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof GuestResetPasswordRouteImport
       parentRoute: typeof GuestRoute
     }
     '/_guest/sign-up': {
@@ -259,12 +375,14 @@ const AppDashboardCollectionsCollectionIdRouteRouteWithChildren =
 
 interface AppRouteChildren {
   AppLanguagesRoute: typeof AppLanguagesRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppDashboardIndexRoute: typeof AppDashboardIndexRoute
   AppDashboardCollectionsCollectionIdRouteRoute: typeof AppDashboardCollectionsCollectionIdRouteRouteWithChildren
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppLanguagesRoute: AppLanguagesRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppDashboardIndexRoute: AppDashboardIndexRoute,
   AppDashboardCollectionsCollectionIdRouteRoute:
     AppDashboardCollectionsCollectionIdRouteRouteWithChildren,
@@ -273,12 +391,18 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface GuestRouteChildren {
+  GuestCheckEmailRoute: typeof GuestCheckEmailRoute
+  GuestForgotPasswordRoute: typeof GuestForgotPasswordRoute
   GuestLoginRoute: typeof GuestLoginRoute
+  GuestResetPasswordRoute: typeof GuestResetPasswordRoute
   GuestSignUpRoute: typeof GuestSignUpRoute
 }
 
 const GuestRouteChildren: GuestRouteChildren = {
+  GuestCheckEmailRoute: GuestCheckEmailRoute,
+  GuestForgotPasswordRoute: GuestForgotPasswordRoute,
   GuestLoginRoute: GuestLoginRoute,
+  GuestResetPasswordRoute: GuestResetPasswordRoute,
   GuestSignUpRoute: GuestSignUpRoute,
 }
 
@@ -288,6 +412,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   GuestRoute: GuestRouteWithChildren,
+  EmailChangedRoute: EmailChangedRoute,
+  EmailVerifiedRoute: EmailVerifiedRoute,
   ApiSplatRoute: ApiSplatRoute,
 }
 export const routeTree = rootRouteImport

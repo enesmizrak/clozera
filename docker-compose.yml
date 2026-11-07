@@ -39,6 +39,8 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     restart: unless-stopped
     ports:
       - '3000:3000'
@@ -51,6 +53,9 @@ services:
       NODE_ENV: development
       PORT: 3000
       MONGODB_CONNECTION_STRING: mongodb://mongodb:27017/clozera
+      # Development email goes to Mailpit, never to real inboxes: http://localhost:8025
+      EMAIL_TRANSPORT: smtp
+      SMTP_URL: smtp://mailpit:1025
     healthcheck:
       test:
         [
@@ -79,6 +84,14 @@ services:
       timeout: 5s
       retries: 6
       start_period: 10s
+
+  # Local mail catcher. SMTP on 1025, inbox UI on http://localhost:8025. Messages are not persisted.
+  mailpit:
+    image: axllent/mailpit:v1.33
+    restart: unless-stopped
+    ports:
+      - '1025:1025'
+      - '8025:8025'
 
 volumes:
   mongodb80-data:

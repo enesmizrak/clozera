@@ -11,6 +11,7 @@ The repository is an npm workspace with one lockfile.
 | Workspace | Purpose |
 | --- | --- |
 | `packages/shared` | Response DTO types, Zod request schemas and sentence helpers. Both apps import it, so an API contract change fails type checking on both sides. |
+| `packages/emails` | React Email templates. Built to `dist/` because Node cannot run TSX; the API's dev and maintenance scripts build it first. |
 | `backend` | Express 5 REST API, Mongoose models, Better Auth and maintenance scripts. |
 | `frontend` | TanStack Start web app with SSR and a same-origin `/api` proxy. |
 | `tooling` | Oxlint and Oxfmt settings shared by every `vite.config.ts`. |
@@ -63,13 +64,37 @@ The previous `sessions` collection (connect-mongo) is unused and can be dropped.
 `GET /api/session` returns the learner profile or `null` and never answers 401; the web
 app uses it for SSR and route guards. Protected routes use `requireUser`/`requireAdmin`.
 
-### Legacy password migration
+### Email verification and account emails
 
-passport-local-mongoose stored PBKDF2 hashes on the user document. The password hasher
-(`src/auth/passwords.ts`) verifies both those hashes and Better Auth's scrypt hashes, so
-nobody needs to reset a password. `npm run auth:migrate-legacy` copies each legacy hash
-into a Better Auth credential account, lowercases emails and removes the old fields. It
-skips users whose lowercased email collides with another account and reports them.
+Email/password accounts must verify their address before they can sign in. Better Auth
+sends three emails, rendered from `packages/emails`:
+
+| Email | Trigger | Link | Lands on |
+| --- | --- | --- | --- |
+| Verify email | Sign-up, or signing in while unverified | 24 hours, signs the learner in | `/email-verified` |
+| Reset password | `/forgot-password` | 1 hour, single use; ends other sessions | `/reset-password?token=` |
+| Approve email change | `/settings` → change email (sent to the current address) | 24 hours; then a verify email goes to the new address | `/email-changed` |
+
+Links point at `/api/auth/*` on the web origin, so they pass through the same proxy as
+the app. Emails are sent after the response (`src/email/mailer.ts`): auth endpoints stay
+fast and response time does not reveal whether an address has an account. Password reset
+answers identically for unknown addresses. Rate limits apply to sign-in, sign-up and the
+email endpoints in production; they are kept in memory per instance.
+
+There is no session cookie cache, so a password reset or sign-out elsewhere ends sessions
+immediately.
+
+The transport is chosen by `EMAIL_TRANSPORT`: `resend` (required in production), `smtp`
+(Mailpit locally) or `console`. Tests always use an in-memory outbox and never send mail.
+
+### Legacy accounts
+
+passport-local-mongoose stored PBKDF2-SHA256 hashes with 25,000 iterations on the user
+document, far below current guidance. They are deleted rather than migrated.
+`npm run auth:migrate-legacy` lowercases emails, marks the accounts as verified and
+removes the old hash fields; `--notify` sends each learner a password reset link. The
+reset flow creates their Better Auth credential. Users whose lowercased email collides
+with another account are skipped and reported.
 
 ## Frontend
 
@@ -104,7 +129,7 @@ and dynamic class strings; arbitrary values are warnings.
 
 | Service | Image | Required environment |
 | --- | --- | --- |
-| API | `backend/Dockerfile.production` | `MONGODB_CONNECTION_STRING`, `BETTER_AUTH_SECRET` (32+ random characters), `FRONTEND_URL` (public web origin). Optional: `BETTER_AUTH_URL`, `MONGODB_TRANSACTIONS=true` on Atlas. |
+| API | `backend/Dockerfile.production` | `MONGODB_CONNECTION_STRING`, `BETTER_AUTH_SECRET` (32+ random characters), `FRONTEND_URL` (public web origin, also used for links and images in emails), `RESEND_API_KEY` (from Secret Manager), `EMAIL_FROM`, `EMAIL_REPLY_TO`. Optional: `BETTER_AUTH_URL`, `MONGODB_TRANSACTIONS=true` on Atlas. |
 | Web | `frontend/Dockerfile.production` | `API_INTERNAL_URL` (API base URL reachable from the web server), `PORT` (set by Cloud Run). |
 
 Build both images from the repository root, for example
@@ -118,5 +143,5 @@ Upgrade order for an existing environment:
 
 1. Deploy the API with `BETTER_AUTH_SECRET` and the web app with `API_INTERNAL_URL`.
 2. Run `npm run auth:migrate-legacy -w backend` against the database, review the dry run,
-   then run it again with `-- --apply`.
+   then run it again with `-- --apply --notify`.
 3. Optionally drop the unused `sessions` collection.

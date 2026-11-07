@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { FieldGroup } from '@/components/ui/field'
 import { homePathFor, safeRedirect, sessionQuery } from '@/data/session'
 import { authClient } from '@/lib/auth-client'
-import { authSearchSchema } from './-auth'
+import { authErrorMessage } from '@/lib/auth-errors'
+import { EMAIL_VERIFIED_PATH, authSearchSchema } from './-auth'
 
 export const Route = createFileRoute('/_guest/login')({
   validateSearch: authSearchSchema,
@@ -27,15 +28,18 @@ function LoginPage() {
     onSubmit: async ({ value }) => {
       setServerError(null)
       const credentials = loginSchema.parse(value)
-      const { error } = await authClient.signIn.email(credentials)
+      const { error } = await authClient.signIn.email({ ...credentials, callbackURL: EMAIL_VERIFIED_PATH })
+      if (error?.code === 'EMAIL_NOT_VERIFIED') {
+        // Better Auth has just emailed a fresh verification link.
+        await router.navigate({ to: '/check-email', search: { email: credentials.email } })
+        return
+      }
       if (error) {
-        setServerError(
-          error.status === 401 ? 'Invalid email or password.' : (error.message ?? 'Unable to log in.')
-        )
+        setServerError(authErrorMessage(error, 'Unable to log in.'))
         return
       }
       const user = await queryClient.fetchQuery({ ...sessionQuery, staleTime: 0 })
-      await router.invalidate()
+      // Navigate directly: invalidating first would let the guest guard redirect before this does.
       await router.navigate({
         href: safeRedirect(search.redirect) ?? (user ? homePathFor(user) : '/'),
         replace: true,
@@ -66,6 +70,17 @@ function LoginPage() {
             <form.AppField name="password">
               {field => <field.PasswordField label="Password" autoComplete="current-password" />}
             </form.AppField>
+            <form.Subscribe selector={state => state.values.email}>
+              {email => (
+                <Link
+                  to="/forgot-password"
+                  search={email ? { email } : {}}
+                  className="-mt-3 self-end text-sm text-primary underline-offset-4 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              )}
+            </form.Subscribe>
             <FormError message={serverError} />
             <form.AppForm>
               <form.SubmitButton className="w-full">Log in</form.SubmitButton>

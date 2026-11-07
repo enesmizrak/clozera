@@ -105,10 +105,11 @@ export function AppHeader() {
       toast.error('Unable to end your session. Please try again.')
       return
     }
-    await resetLearnerData()
+    // Leave the app first so no live query still reads the collections being dropped.
     queryClient.setQueryData(sessionQuery.queryKey, null)
-    await router.invalidate()
     await router.navigate({ to: '/' })
+    await resetLearnerData()
+    await router.invalidate()
   }
 
   return (
@@ -145,6 +146,7 @@ export function AppHeader() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setAccountOpen(true)}>Account info</DropdownMenuItem>
               <DropdownMenuItem render={<Link to="/languages" />}>Add language pair</DropdownMenuItem>
+              <DropdownMenuItem render={<Link to="/settings" />}>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => void signOut()}>Log out</DropdownMenuItem>
             </DropdownMenuContent>

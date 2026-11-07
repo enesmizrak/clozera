@@ -114,3 +114,25 @@ export const listSentencesQuerySchema = z.object({
 export const dashboardQuerySchema = z.object({
   languagePair: z.string().trim().min(1).optional(),
 })
+
+export const forgotPasswordSchema = z.object({ email: emailSchema })
+
+const passwordsMatch = {
+  check: (value: { newPassword: string; confirmPassword: string }) =>
+    value.newPassword === value.confirmPassword,
+  issue: { message: 'Passwords do not match.', path: ['confirmPassword'] },
+}
+
+export const resetPasswordSchema = z
+  .object({ newPassword: passwordSchema, confirmPassword: z.string() })
+  .refine(passwordsMatch.check, passwordsMatch.issue)
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Enter your current password.'),
+    newPassword: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine(passwordsMatch.check, passwordsMatch.issue)
+
+export const changeEmailSchema = z.object({ newEmail: emailSchema })

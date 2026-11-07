@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json tsconfig.base.json ./
 COPY packages/shared/package.json packages/shared/
+COPY packages/emails/package.json packages/emails/
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/
 RUN npm ci --workspace @clozera/frontend --include-workspace-root

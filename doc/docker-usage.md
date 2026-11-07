@@ -21,7 +21,7 @@ Compose. Run the following commands from the project root, where
 - Images build from the repository root (`context: .`) because both applications
   depend on the shared `packages/shared` workspace.
 
-- Ports `5173`, `3000`, and `27017` must be available. For example, stop any
+- Ports `5173`, `3000`, `27017`, `1025` and `8025` must be available. For example, stop any
   local Vite server before starting the frontend container.
 
 ## Starting the services
@@ -38,6 +38,12 @@ the background:
 | Frontend | http://localhost:5173 |
 | Backend | http://localhost:3000 |
 | MongoDB | localhost:27017 |
+| Mailpit inbox | http://localhost:8025 (SMTP on 1025) |
+
+The API container sends every email to Mailpit, so sign-up confirmations and password
+reset links appear in its inbox and never reach real addresses. Mailpit does not keep
+messages across restarts. Email templates are built into the API image; rebuild it with
+`--build` after changing `packages/emails`.
 
 `--build` rebuilds the application images using the current source code and
 dependencies. `-d` runs the services in the background, leaving your terminal

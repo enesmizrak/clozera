@@ -1,13 +1,13 @@
 import { signUpSchema } from '@clozera/shared'
-import { useQueryClient } from '@tanstack/react-query'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { FormError, useAppForm } from '@/components/form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FieldGroup } from '@/components/ui/field'
-import { safeRedirect, sessionQuery } from '@/data/session'
+import { safeRedirect } from '@/data/session'
 import { authClient, browserTimezone } from '@/lib/auth-client'
-import { authSearchSchema } from './-auth'
+import { authErrorMessage } from '@/lib/auth-errors'
+import { EMAIL_VERIFIED_PATH, authSearchSchema } from './-auth'
 
 export const Route = createFileRoute('/_guest/sign-up')({
   validateSearch: authSearchSchema,
@@ -18,7 +18,6 @@ export const Route = createFileRoute('/_guest/sign-up')({
 function SignUpPage() {
   const search = Route.useSearch()
   const router = useRouter()
-  const queryClient = useQueryClient()
   const [serverError, setServerError] = useState<string | null>(null)
 
   const form = useAppForm({
@@ -26,18 +25,21 @@ function SignUpPage() {
     validators: { onChange: signUpSchema },
     onSubmit: async ({ value }) => {
       setServerError(null)
+      const input = signUpSchema.parse(value)
+      const redirect = safeRedirect(search.redirect)
       const { error } = await authClient.signUp.email({
-        ...signUpSchema.parse(value),
+        ...input,
         timezone: browserTimezone(),
+        // The emailed link signs the learner in and continues from the verification page.
+        callbackURL: redirect
+          ? `${EMAIL_VERIFIED_PATH}?redirect=${encodeURIComponent(redirect)}`
+          : EMAIL_VERIFIED_PATH,
       })
       if (error) {
-        setServerError(error.message ?? 'Unable to create your account.')
+        setServerError(authErrorMessage(error, 'Unable to create your account.'))
         return
       }
-      await queryClient.fetchQuery({ ...sessionQuery, staleTime: 0 })
-      await router.invalidate()
-      // New learners always choose a language pair first.
-      await router.navigate({ href: safeRedirect(search.redirect) ?? '/languages', replace: true })
+      await router.navigate({ to: '/check-email', search: { email: input.email }, replace: true })
     },
   })
 
