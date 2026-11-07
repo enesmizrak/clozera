@@ -16,6 +16,7 @@
   "scripts": {
     "dev:api": "npm run dev -w backend",
     "dev:web": "npm run dev -w frontend",
+    "dev:emails": "npm run dev -w @clozera/emails",
     "build": "npm run build -w frontend",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "check": "npm run check --workspaces --if-present",
