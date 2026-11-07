@@ -1,6 +1,6 @@
-> Historical upgrade notes: the frontend has since migrated to React, React Router,
-> Zustand and shadcn/ui. The Vue/Pinia/PrimeVue details below describe the previous
-> stack. See [frontend/README.md](frontend/README.md) for the current setup.
+> Historical upgrade notes: the project has since moved to a TypeScript npm workspace
+> with TanStack Start, Better Auth and Effect. The details below describe earlier
+> stacks. See [doc/architecture.md](doc/architecture.md) for the current setup.
 
 # Dependency upgrade and Vite+ migration
 

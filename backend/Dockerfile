@@ -1,14 +1,19 @@
+# Development image. Build from the repository root: the API uses the shared workspace package.
 FROM node:24.22.1-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json tsconfig.base.json ./
+COPY packages/shared/package.json packages/shared/
+COPY backend/package.json backend/
+COPY frontend/package.json frontend/
+RUN npm ci --workspace @clozera/backend --include-workspace-root
 
-RUN npm ci
+COPY tooling ./tooling
+COPY packages/shared ./packages/shared
+COPY backend ./backend
 
-COPY bin ./bin
-COPY vite.config.mjs ./
-
+WORKDIR /app/backend
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+CMD ["node", "--watch", "src/server.ts"]

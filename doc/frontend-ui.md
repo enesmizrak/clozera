@@ -2,7 +2,8 @@
 
 ## Ortak tasarım kaynağı
 
-- Renk, radius ve yazı tipi tokenları: `frontend/src/assets/main.css`.
+- Renk, radius ve yazı tipi tokenları: `frontend/src/styles.css`. Yazı tipleri
+  `@fontsource-variable` paketlerinden yerel olarak yüklenir; üçüncü taraf font isteği yapılmaz.
 - `primary`: ana aksiyon ve seçili kontrol. `success`: doğru cevap veya olumlu
   öz değerlendirme. `destructive`: yanlış cevap, hata ve silme işlemi.
 - Sayfa yerleşimi: `page-shell`; pratik ekranında `data-width="practice"` ile
@@ -10,8 +11,15 @@
 - Mod seçimi: shadcn `Label` ve `RadioGroupItem` üzerine `selection-card` uygulanır.
   Görünüm `data-selected` ve `data-disabled` durumlarından türetilir.
 - Kontroller `frontend/src/components/ui` içindeki resmi shadcn kaynaklarından
-  gelir. Yeni bir kontrol gerektiğinde mevcut `components.json` ile resmi CLI
-  üzerinden eklenir. Uygulamaya özgü ortak akışlar, bu kontrolleri birleştirir.
+  gelir (Base UI, `base-vega` stili). Yeni bir kontrol gerektiğinde mevcut
+  `components.json` ile resmi CLI üzerinden eklenir. Uygulamaya özgü ortak akışlar,
+  bu kontrolleri birleştirir. Base UI'da `asChild` yerine `render` kullanılır;
+  bağlantıları buton gibi göstermek için `buttonVariants()` sınıfları kullanılır.
+- `@shadcn/lint` kuralları (Oxlint içinde) ham Tailwind renklerini, bilinmeyen
+  sınıfları ve dinamik sınıf dizelerini reddeder; keyfi değerler uyarı verir.
+- Formlar TanStack Form + shadcn `Field` bileşenleriyle kurulur
+  (`src/components/form.tsx`); doğrulama `@clozera/shared` içindeki Zod şemalarını
+  kullanır, böylece API ile aynı kurallar uygulanır.
 
 ## Koleksiyon kartları
 
@@ -24,16 +32,29 @@ Henüz backend'de tutulmayan öğrenme yüzdeleri, mastery veya geçmiş istatis
 kartlarda gösterilmez. Arama alanı görünür kalır; sıralama ad veya cümle sayısına
 uygulanır. Mobilde kartlar ve cevap alanları tek sütuna geçer.
 
+Sekme ve arama metni URL'de tutulur (`/dashboard?tab=collections&q=...`); geri
+gidildiğinde aynı görünüm ve kaydırma konumu geri gelir. Sıralama, açık resmi grup
+başlıkları ve son seçilen pratik modu/oturum uzunluğu cihazda (Zustand `persist`)
+saklanır. Dashboard'daki "Practice material" grafiği (TanStack Charts) sabitlenmiş
+koleksiyonların cümle sayılarını sıralı yatay çubuklarla ve ekran okuyucu için
+tablo eşdeğeriyle gösterir.
+
+Koleksiyon açıklamaları ve cümle notları Markdown olarak (TanStack Markdown)
+gösterilir; topluluk içerikleri başka öğrenicilerden geldiği için ham HTML kapalıdır.
+Cümle listesi TanStack Table ile aranır ve sayfalanır (25 satır).
+
 ## Pratik mimarisi
 
-- `src/lib/practice-session.js`: framework bağımsız cevap kontrolü, karıştırma,
+- `src/lib/practice-session.ts`: framework bağımsız cevap kontrolü, karıştırma,
   mod doğrulama ve oturum uzunluğu seçenekleri.
-- `src/lib/practice-options.js`: mod ve pratik türlerinin ortak adları,
+- `src/lib/practice-options.ts`: mod ve pratik türlerinin ortak adları,
   açıklamaları, ikonları, yönergeleri ve kullanılabilirlik durumu.
-- `src/hooks/use-practice-session.js`: cümleleri yükleme, soru ilerletme, cevap
-  açma, değerlendirme ve yeniden başlatma davranışı.
-- `PracticeDialog`: seçenekleri shadcn radio/select kontrolleriyle sunar.
-- `PracticeSessionView`: aynı oturum davranışını seçilen cevap moduna göre sunar.
+- `src/hooks/use-practice-session.ts`: soru ilerletme, cevap açma, değerlendirme
+  ve yeniden başlatma davranışı (`useReducer`). Cümleler route loader'ında TanStack
+  DB koleksiyonuna önceden yüklenir.
+- `src/components/practice-dialog.tsx`: seçenekleri shadcn radio/select kontrolleriyle sunar.
+- `src/routes/_app/dashboard/collections/$collectionId/practice.tsx`: aynı oturum
+  davranışını seçilen cevap moduna göre sunar.
 
 Desteklenen modlar:
 
@@ -72,8 +93,8 @@ Sadece kullanılabilirlik bayrağını değiştirmek özelliği tamamlamaz.
   geçildiğinde ayrıca bir cevap butonuna odaklanmadan kullanılabilir. Dinleyici
   yalnızca aktif soruyu değerlendirir; metin alanları, açık menü/dialoglar, IME,
   basılı tutulan tuş tekrarları ve Ctrl/Alt/Meta kısayolları engellenmez.
-- Kontrol komutları: `npm --prefix frontend run test:unit -- --run`,
-  `npm --prefix frontend run build`, `npm --prefix frontend run check`.
+- Kontrol komutları: `npm test -w frontend`, `npm run build -w frontend`,
+  `npm run check -w frontend`, `npm run typecheck -w frontend`.
 
 
 ## Cümle içi cevap alanı
@@ -100,7 +121,7 @@ Navbar'da `public/brand/clozera-wordmark.png` kullanılır. Bu dosya, seçilmiş
 zemin logosunun optimize edilmiş şeffaf PNG kopyasıdır; mevcut açık arayüz teması
 ile kullanılır. Link erişilebilir bir ad taşır ve görüntü için boyutlar tanımlıdır.
 
-`index.html`, açık ve koyu tarayıcı temaları için ayrı favicon PNG dosyalarını
+Kök route (`src/routes/__root.tsx`), açık ve koyu tarayıcı temaları için ayrı favicon PNG dosyalarını
 `prefers-color-scheme` media sorgusuyla seçer. ICO varsayılan sürümü ve kökteki
 `favicon.ico`/`favicon.png` dosyaları eski istemciler için korunur. Tarayıcı
 sekmesinin teması, uygulamanın arayüz temasından bağımsızdır; sistem koyu modda

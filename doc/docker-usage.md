@@ -14,9 +14,12 @@ Compose. Run the following commands from the project root, where
   ```
 
   Do not overwrite an existing `.env` file. For local development, use
-  `FRONTEND_URL=http://localhost:5173` and replace `SESSION_SECRET` with a long,
-  random string. Compose points the backend's MongoDB connection to the
-  `mongodb` service on its internal network.
+  `FRONTEND_URL=http://localhost:5173` and set `BETTER_AUTH_SECRET` to a random
+  string of at least 32 characters (`openssl rand -base64 32`). Compose points the
+  backend's MongoDB connection to the `mongodb` service on its internal network.
+
+- Images build from the repository root (`context: .`) because both applications
+  depend on the shared `packages/shared` workspace.
 
 - Ports `5173`, `3000`, and `27017` must be available. For example, stop any
   local Vite server before starting the frontend container.
@@ -41,8 +44,9 @@ dependencies. `-d` runs the services in the background, leaving your terminal
 available. Compose waits for MongoDB's health check, then the backend's health
 check, before starting the frontend.
 
-Open **http://localhost:5173** in your browser. Use `localhost` consistently
-for session cookies and CORS settings.
+Open **http://localhost:5173** in your browser. The web container proxies `/api`
+to the `api` container (`API_INTERNAL_URL=http://api:3000`), so the browser only talks
+to port 5173 and the session cookie is first-party. Use `localhost` consistently.
 
 To check service status and follow logs:
 

@@ -1,14 +1,19 @@
+# Development image. Build from the repository root: the web app uses the shared workspace package.
 FROM node:24.22.1-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json tsconfig.base.json ./
+COPY packages/shared/package.json packages/shared/
+COPY backend/package.json backend/
+COPY frontend/package.json frontend/
+RUN npm ci --workspace @clozera/frontend --include-workspace-root
 
-RUN npm ci
+COPY tooling ./tooling
+COPY packages/shared ./packages/shared
+COPY frontend ./frontend
 
-COPY index.html vite.config.js jsconfig.json ./
-COPY .gitignore ./
-
+WORKDIR /app/frontend
 EXPOSE 5173
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
+CMD ["npx", "vp", "dev", "--host", "0.0.0.0", "--port", "5173"]

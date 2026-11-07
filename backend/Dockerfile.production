@@ -1,16 +1,22 @@
+# Build from the repository root: docker build -f backend/Dockerfile.production .
+# Node runs the TypeScript sources directly (type stripping), so there is no compile step.
 FROM node:24.22.1-alpine
 
 ENV NODE_ENV=production
-
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+COPY packages/shared/package.json packages/shared/
+COPY backend/package.json backend/
+COPY frontend/package.json frontend/
+RUN npm ci --omit=dev --workspace @clozera/backend && npm cache clean --force
 
-RUN npm ci --omit=dev
+COPY packages/shared/src ./packages/shared/src
+COPY backend/src ./backend/src
+COPY backend/scripts ./backend/scripts
 
-COPY bin ./bin
-COPY src ./src
-
+WORKDIR /app/backend
+USER node
 EXPOSE 3000
 
-CMD ["node", "./bin/www"]
+CMD ["node", "src/server.ts"]

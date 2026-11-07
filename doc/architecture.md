@@ -1,0 +1,122 @@
+# Architecture
+
+This document describes how Clozera's TypeScript stack fits together and records the
+decisions made when the project moved from JavaScript, React Router and Passport to
+TanStack Start, Better Auth and Effect.
+
+## Workspaces
+
+The repository is an npm workspace with one lockfile.
+
+| Workspace | Purpose |
+| --- | --- |
+| `packages/shared` | Response DTO types, Zod request schemas and sentence helpers. Both apps import it, so an API contract change fails type checking on both sides. |
+| `backend` | Express 5 REST API, Mongoose models, Better Auth and maintenance scripts. |
+| `frontend` | TanStack Start web app with SSR and a same-origin `/api` proxy. |
+| `tooling` | Oxlint and Oxfmt settings shared by every `vite.config.ts`. |
+
+All workspaces use TypeScript 7 with `erasableSyntaxOnly`. The API runs its `.ts`
+sources directly with Node's built-in type stripping, so it has no build step;
+`npm run typecheck` runs `tsc` in every workspace. Vite+ provides Vitest, Oxlint
+(type-aware) and Oxfmt.
+
+## Request flow
+
+```
+Browser ──/api/*──▶ Web server (TanStack Start) ──▶ API (Express) ──▶ MongoDB
+   │                    │
+   └── SSR pages ◀──────┘ server-side fetches go straight to API_INTERNAL_URL
+```
+
+The browser only talks to the web origin. `frontend/src/routes/api/$.ts` forwards
+`/api/*` to the API. This keeps the Better Auth cookie first-party (no
+`SameSite=None` third-party cookie) and lets server rendering read the same session.
+During SSR, `src/lib/api.ts` calls the API directly and forwards the visitor's cookie.
+
+## Backend
+
+- **Routes** (`src/routes`) parse input with the shared Zod schemas and call services.
+- **Services** (`src/services`) are Effect programs. Expected failures are tagged errors
+  (`NotFound`, `Forbidden`, `ValidationFailed`, `Conflict`, `Unauthenticated`,
+  `DatabaseError`) in the Effect error channel instead of thrown objects with ad hoc
+  `status` fields. `src/http/handler.ts` maps them to the JSON error envelope
+  `{ error: { code, message, details } }`; anything unexpected becomes a 500.
+- **Database access** goes through `db()` in `src/http/db.ts`, which turns duplicate keys
+  into `409 Conflict`, Mongoose validation errors into `400`, and everything else into
+  `DatabaseError`.
+- **Serializers** (`src/lib/serializers.ts`) produce the DTOs declared in `@clozera/shared`.
+
+Search input is escaped before it reaches a MongoDB regular expression, malformed ids
+return 404 instead of a cast error, and slug generation uses one query.
+
+### Authentication
+
+Better Auth is mounted at `/api/auth/*` with email/password and the `username` plugin.
+Users live in the existing Mongoose `users` collection, so ObjectId references from
+collections and sentences keep working. Better Auth writes identity fields; Mongoose owns
+learning fields (`selectedLanguagePair`, `languagePairs`, `pinnedCollections`). `role` and
+`timezone` are Better Auth additional fields; `role` cannot be set by sign-up.
+
+Better Auth's own data uses `auth_sessions`, `auth_accounts` and `auth_verifications`.
+The previous `sessions` collection (connect-mongo) is unused and can be dropped.
+
+`GET /api/session` returns the learner profile or `null` and never answers 401; the web
+app uses it for SSR and route guards. Protected routes use `requireUser`/`requireAdmin`.
+
+### Legacy password migration
+
+passport-local-mongoose stored PBKDF2 hashes on the user document. The password hasher
+(`src/auth/passwords.ts`) verifies both those hashes and Better Auth's scrypt hashes, so
+nobody needs to reset a password. `npm run auth:migrate-legacy` copies each legacy hash
+into a Better Auth credential account, lowercases emails and removes the old fields. It
+skips users whose lowercased email collides with another account and reports them.
+
+## Frontend
+
+| Concern | Owner |
+| --- | --- |
+| Routing, SSR, `/api` proxy | TanStack Start + Router (file routes in `src/routes`) |
+| Session, languages, single collection | TanStack Query (`src/data/session.ts`, `languages.ts`) |
+| Library and sentences | TanStack DB query collections (`src/data/collections.ts`) |
+| Forms | TanStack Form with shared Zod schemas (`src/components/form.tsx`) |
+| Sentence list | TanStack Table v9 with global filter and pagination |
+| Practice material chart | TanStack Charts (`src/components/library-chart.tsx`) |
+| Notes and descriptions | TanStack Markdown, raw HTML disabled |
+| Device preferences | Zustand with `persist` (`src/stores/preferences.ts`) |
+| Navigation state | URL search params (`/dashboard?tab=&q=`, `/practice?mode=&limit=`) |
+
+Public pages (home, login, sign-up) render on the server. The signed-in area under
+`src/routes/_app` sets `ssr: false`: TanStack DB collections are client-side only, and
+module-level collections must never be shared between server requests. Loaders preload
+the collections before a page renders.
+
+The library collection holds every collection the learner can see in a language pair.
+The dashboard, shelves and pinned list are live queries over it, so pinning, editing and
+deleting update every view at once. Pin, edit and delete are optimistic and roll back
+on failure; creation waits for the server-assigned id. Signing out cleans up every
+collection and clears the Query cache.
+
+UI primitives in `src/components/ui` come from the shadcn CLI with the Base UI `base-vega`
+style. `@shadcn/lint` runs inside Oxlint and rejects raw palette colors, unknown classes
+and dynamic class strings; arbitrary values are warnings.
+
+## Deployment
+
+| Service | Image | Required environment |
+| --- | --- | --- |
+| API | `backend/Dockerfile.production` | `MONGODB_CONNECTION_STRING`, `BETTER_AUTH_SECRET` (32+ random characters), `FRONTEND_URL` (public web origin). Optional: `BETTER_AUTH_URL`, `MONGODB_TRANSACTIONS=true` on Atlas. |
+| Web | `frontend/Dockerfile.production` | `API_INTERNAL_URL` (API base URL reachable from the web server), `PORT` (set by Cloud Run). |
+
+Build both images from the repository root, for example
+`docker build -f frontend/Dockerfile.production .`. The web image is a Node server
+(`srvx`) rather than nginx, because it renders pages and proxies `/api`.
+
+`SESSION_SECRET` is still accepted as a fallback for `BETTER_AUTH_SECRET` while
+environments are migrated. `VITE_API_BASE_URL` is no longer used.
+
+Upgrade order for an existing environment:
+
+1. Deploy the API with `BETTER_AUTH_SECRET` and the web app with `API_INTERNAL_URL`.
+2. Run `npm run auth:migrate-legacy -w backend` against the database, review the dry run,
+   then run it again with `-- --apply`.
+3. Optionally drop the unused `sessions` collection.

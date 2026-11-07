@@ -2,43 +2,89 @@
 
 Open-source language learning app built around cloze-based practice.
 
+## Stack
+
+| Layer | Technology |
+| --- | --- |
+| Language | TypeScript 7 everywhere, Zod 4 schemas shared by API and UI |
+| Web app | TanStack Start (SSR) + Router, Query, DB, Form, Table, Charts, Markdown; React 19 |
+| UI | shadcn/ui on Base UI, Tailwind CSS v4, `@shadcn/lint` design-system rules |
+| Client state | TanStack DB/Query for server data, URL search params for navigation, Zustand for device preferences |
+| API | Express 5, Mongoose 9, Better Auth, Effect 4 for typed service errors |
+| Tooling | npm workspaces, Vite+ (build, Vitest, Oxlint, Oxfmt), Node 24 type stripping |
+
+See [doc/architecture.md](doc/architecture.md) for how the pieces fit together and why.
+
+## Repository layout
+
+```
+packages/shared   @clozera/shared: API contracts, Zod schemas, sentence helpers
+backend           @clozera/backend: REST API under /api, Better Auth under /api/auth
+frontend          @clozera/frontend: TanStack Start app; proxies /api to the backend
+tooling           Lint and format settings shared by every workspace
+```
+
 ## Development
 
-Use Node.js 24.22.1 (see each application's `.node-version`) and npm for local development.
-The frontend and backend have separate dependency manifests and lockfiles.
-Both applications use Vite+ through npm scripts; no global `vp` installation is required.
-The Express backend and frontend use ES Modules; both run tests with Vite+ Vitest.
-
-Local Docker tracks the latest MongoDB 8.0 patch with `mongo:8.0`. Refresh the
-database image before testing with `docker compose up -d --pull always mongodb`.
-Compose also sets `pull_policy: always` for MongoDB, so normal startup checks for updates.
-Local and Atlas Free use the same MongoDB 8.0 release series. Atlas manages its
-patch schedule, so exact patch versions can differ. Server versions cannot be
-manually selected on the free tier. Changing the Compose image does not change Atlas.
-
-Compose uses the `mongodb80-data` volume key. Existing `mongodb-data` volumes
-are not copied automatically. Before starting an existing installation, identify
-its current MongoDB version, FCV and mounted volume, then prepare a verified copy
-for the new volume. Do not attach data from an incompatible release directly to
-MongoDB 8.0; follow the supported migration procedure on the restored copy.
-
-Before changing the MongoDB release series or data volume, stop application writes,
-take a consistent backup and validate a restored copy using MongoDB's supported
-migration procedure. Keep the source volume until the new copy is verified.
-Use `docker compose stop` for ordinary shutdowns; `docker compose down -v` deletes
-the declared database volume.
-
-Create a local backend environment file before running Docker Compose:
+Use Node.js 24.15 or newer (see `.node-version` files) and npm. Install once from the root:
 
 ```sh
+npm ci
 cp backend/.env.example backend/.env
 ```
 
-Then start the development services:
+Start MongoDB, then the API and the web app in two terminals:
 
 ```sh
-docker compose up --build
+docker compose up -d mongodb
+npm run dev:api
+npm run dev:web
 ```
 
-See the [dependency upgrade and Vite+ migration notes](DEPENDENCY_UPGRADE.md)
-for validation commands, compatibility decisions, and future toolchain updates.
+Open http://localhost:5173. The web app proxies `/api` to the API on port 3000, so the
+auth cookie is first-party and also available during server rendering.
+
+Seed local content with an admin account (see `backend/.env.example`):
+
+```sh
+npm run admin:upsert -w backend
+npm run seed:initials -w backend
+```
+
+## Validation
+
+```sh
+npm run typecheck
+npm run check
+npm test
+npm run test:integration
+npm run build
+```
+
+`npm run test:integration` needs the local MongoDB and `backend/.env.test.local`
+(copy `backend/.env.test.example`).
+
+## Docker
+
+`docker compose up --build` runs MongoDB, the API and the web app. Images build from the
+repository root because both applications use the shared workspace. See
+[doc/docker-usage.md](doc/docker-usage.md).
+
+Local Docker tracks the latest MongoDB 8.0 patch with `mongo:8.0`, matching the
+Atlas release series. Before changing the MongoDB release series or data volume,
+stop application writes, take a consistent backup and validate a restored copy.
+Use `docker compose stop` for ordinary shutdowns; `docker compose down -v` deletes
+the database volume.
+
+## Upgrading existing installations
+
+Accounts created before Better Auth keep their passwords. Run the credential
+migration once per database; it is a dry run unless `--apply` is passed:
+
+```sh
+npm run auth:migrate-legacy -w backend
+npm run auth:migrate-legacy -w backend -- --apply
+```
+
+Existing sessions end with this upgrade, so everyone signs in again once.
+Production needs `BETTER_AUTH_SECRET`; see [doc/architecture.md](doc/architecture.md#deployment).
