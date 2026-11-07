@@ -6,6 +6,12 @@ npm-debug.log*
 # Dependency directories
 node_modules/
 
+# Build output
+dist/
+.output/
+.tanstack/
+.vite/
+
 # Optional npm cache directory
 .npm
 

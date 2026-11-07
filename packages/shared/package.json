@@ -1,0 +1,24 @@
+{
+  "name": "@clozera/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API contracts, validation schemas and domain helpers shared by the Clozera backend and frontend.",
+  "license": "GPL-3.0-only",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vp test run",
+    "check": "vp check"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite-plus": "1.5.0"
+  }
+}

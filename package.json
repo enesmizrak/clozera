@@ -1,0 +1,29 @@
+{
+  "name": "clozera",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "packageManager": "npm@11.20.0",
+  "workspaces": [
+    "packages/*",
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "dev:api": "npm run dev -w backend",
+    "dev:web": "npm run dev -w frontend",
+    "build": "npm run build -w frontend",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:integration": "npm run test:integration -w backend"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.5.0",
+    "vitest": "5.1.0"
+  }
+}
