@@ -10,9 +10,13 @@
   },
   "scripts": {
     "start": "node src/server.ts",
+    "predev": "npm run build -w @clozera/emails",
     "dev": "node --watch --env-file-if-exists=.env src/server.ts",
+    "preauth:migrate-legacy": "npm run build -w @clozera/emails",
     "auth:migrate-legacy": "node --env-file-if-exists=.env scripts/migrate-legacy-auth.ts",
+    "preadmin:upsert": "npm run build -w @clozera/emails",
     "admin:upsert": "node --env-file-if-exists=.env scripts/upsert-admin.ts",
+    "preseed:initials": "npm run build -w @clozera/emails",
     "seed:initials": "node --env-file-if-exists=.env scripts/seed-initials.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "vp lint .",
@@ -25,6 +29,7 @@
     "test:all": "vp test run"
   },
   "dependencies": {
+    "@clozera/emails": "*",
     "@clozera/shared": "*",
     "better-auth": "^1.7.18",
     "cors": "^2.8.6",
@@ -33,6 +38,8 @@
     "mongodb": "~7.8.0",
     "mongoose": "^9.11.2",
     "morgan": "^1.12.1",
+    "nodemailer": "^10.3.1",
+    "resend": "^6.37.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -40,6 +47,7 @@
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/supertest": "^6.0.3",
     "@vitest/coverage-v8": "5.1.0",
     "supertest": "^7.3.1",

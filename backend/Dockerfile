@@ -5,13 +5,16 @@ WORKDIR /app
 
 COPY package.json package-lock.json tsconfig.base.json ./
 COPY packages/shared/package.json packages/shared/
+COPY packages/emails/package.json packages/emails/
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/
-RUN npm ci --workspace @clozera/backend --include-workspace-root
+RUN npm ci --workspace @clozera/backend --workspace @clozera/emails --include-workspace-root
 
 COPY tooling ./tooling
 COPY packages/shared ./packages/shared
+COPY packages/emails ./packages/emails
 COPY backend ./backend
+RUN npm run build --workspace @clozera/emails
 
 WORKDIR /app/backend
 EXPOSE 3000

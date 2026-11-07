@@ -4,6 +4,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "rewriteRelativeImportExtensions": false,
+    "jsx": "react-jsx",
     "types": ["node"]
   },
   "include": ["src", "scripts", "vite.config.ts"]

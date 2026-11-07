@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { parseEnv } from 'node:util'
 import { defineConfig } from 'vite-plus'
 import { baseRules, fmt, ignoredPaths, testRules, vitePlusLintPlugin } from '../tooling/vite-plus.ts'
@@ -7,6 +8,10 @@ const testEnvFile = new URL('./.env.test.local', import.meta.url)
 const testEnv = existsSync(testEnvFile) ? parseEnv(readFileSync(testEnvFile, 'utf8')) : {}
 
 export default defineConfig({
+  // Tests render templates from source; the running API imports the built package.
+  resolve: {
+    alias: { '@clozera/emails': fileURLToPath(new URL('../packages/emails/src/index.ts', import.meta.url)) },
+  },
   test: {
     pool: 'forks',
     fileParallelism: false,

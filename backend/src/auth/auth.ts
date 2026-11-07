@@ -4,10 +4,12 @@ import { APIError } from 'better-auth/api'
 import { username } from 'better-auth/plugins'
 import type { Db, MongoClient } from 'mongodb'
 import { env } from '../config/env.ts'
-import { passwordHasher } from './passwords.ts'
+import { createMailer, type Mailer } from '../email/mailer.ts'
 
 export const AUTH_BASE_PATH = '/api/auth'
-const FIFTEEN_DAYS_IN_SECONDS = 60 * 60 * 24 * 15
+const ONE_HOUR = 60 * 60
+const ONE_DAY = 24 * ONE_HOUR
+const FIFTEEN_DAYS = 15 * ONE_DAY
 
 /** Better Auth stores users in the Mongoose `users` collection and its own data in `auth_*` collections. */
 export function mongoAuthDatabase(db: Db, client?: MongoClient): NonNullable<BetterAuthOptions['database']> {
@@ -18,7 +20,10 @@ export function mongoAuthDatabase(db: Db, client?: MongoClient): NonNullable<Bet
   )
 }
 
-export function createAuth(database: NonNullable<BetterAuthOptions['database']>) {
+export function createAuth(
+  database: NonNullable<BetterAuthOptions['database']>,
+  mailer: Mailer = createMailer({ background: true })
+) {
   return betterAuth({
     appName: 'Clozera',
     baseURL: env.authUrl,
@@ -34,11 +39,17 @@ export function createAuth(database: NonNullable<BetterAuthOptions['database']>)
         role: { type: ['user', 'admin'], required: false, defaultValue: 'user', input: false },
         timezone: { type: 'string', required: false, defaultValue: 'UTC', input: true },
       },
+      // Two steps: the current address approves the change, then the new address confirms itself.
+      changeEmail: {
+        enabled: true,
+        sendChangeEmailConfirmation: ({ user, newEmail, url }) =>
+          mailer.emailChangeConfirmation(user, newEmail, url),
+      },
     },
     session: {
       modelName: 'auth_sessions',
-      expiresIn: FIFTEEN_DAYS_IN_SECONDS,
-      cookieCache: { enabled: true, maxAge: 5 * 60 },
+      expiresIn: FIFTEEN_DAYS,
+      // No cookie cache: revoked sessions (password reset, sign-out elsewhere) must stop working at once.
     },
     account: { modelName: 'auth_accounts' },
     verification: { modelName: 'auth_verifications' },
@@ -46,7 +57,29 @@ export function createAuth(database: NonNullable<BetterAuthOptions['database']>)
       enabled: true,
       minPasswordLength: 8,
       maxPasswordLength: 128,
-      password: passwordHasher,
+      // Community collections are public, so every account proves it owns its address.
+      requireEmailVerification: true,
+      resetPasswordTokenExpiresIn: ONE_HOUR,
+      revokeSessionsOnPasswordReset: true,
+      sendResetPassword: ({ user, url }) => mailer.passwordReset(user, url),
+    },
+    emailVerification: {
+      sendOnSignUp: true,
+      // Signing in unverified re-sends the link, so an expired email is never a dead end.
+      sendOnSignIn: true,
+      autoSignInAfterVerification: true,
+      expiresIn: ONE_DAY,
+      sendVerificationEmail: ({ user, url }) => mailer.verification(user, url),
+    },
+    rateLimit: {
+      // Enabled in production by default. Limits are per IP and kept in memory per instance.
+      customRules: {
+        '/sign-in/email': { window: 60, max: 10 },
+        '/sign-up/email': { window: 60, max: 5 },
+        '/send-verification-email': { window: 60, max: 3 },
+        '/request-password-reset': { window: 60, max: 3 },
+        '/change-email': { window: 60, max: 3 },
+      },
     },
     plugins: [username()],
     databaseHooks: {
@@ -61,7 +94,11 @@ export function createAuth(database: NonNullable<BetterAuthOptions['database']>)
         },
       },
     },
-    advanced: { cookiePrefix: 'clozera' },
+    advanced: {
+      cookiePrefix: 'clozera',
+      // Cloud Run and the web app's /api proxy forward the client address.
+      ipAddress: { ipAddressHeaders: ['x-forwarded-for'] },
+    },
   })
 }
 

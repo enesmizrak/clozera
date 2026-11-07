@@ -1,5 +1,20 @@
 # Build from the repository root: docker build -f backend/Dockerfile.production .
-# Node runs the TypeScript sources directly (type stripping), so there is no compile step.
+# Node runs the TypeScript sources directly (type stripping). Only the TSX email templates
+# need a build step, which runs in the first stage.
+FROM node:24.22.1-alpine AS emails
+
+WORKDIR /app
+COPY package.json package-lock.json tsconfig.base.json ./
+COPY packages/shared/package.json packages/shared/
+COPY packages/emails/package.json packages/emails/
+COPY backend/package.json backend/
+COPY frontend/package.json frontend/
+RUN npm ci --workspace @clozera/emails --include-workspace-root
+COPY tooling ./tooling
+COPY packages/emails ./packages/emails
+RUN npm run build --workspace @clozera/emails
+
+
 FROM node:24.22.1-alpine
 
 ENV NODE_ENV=production
@@ -7,10 +22,12 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY packages/shared/package.json packages/shared/
+COPY packages/emails/package.json packages/emails/
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/
-RUN npm ci --omit=dev --workspace @clozera/backend && npm cache clean --force
+RUN npm ci --omit=dev --ignore-scripts --workspace @clozera/backend && npm cache clean --force
 
+COPY --from=emails /app/packages/emails/dist ./packages/emails/dist
 COPY packages/shared/src ./packages/shared/src
 COPY backend/src ./backend/src
 COPY backend/scripts ./backend/scripts
