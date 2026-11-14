@@ -4,6 +4,8 @@ This document describes how Clozera's TypeScript stack fits together and records
 decisions made when the project moved from JavaScript, React Router and Passport to
 TanStack Start, Better Auth and Effect.
 
+Decisions with lasting trade-offs are recorded as ADRs in [../docs/adr](../docs/adr); domain terms are defined in [../CONTEXT.md](../CONTEXT.md).
+
 ## Workspaces
 
 The repository is an npm workspace with one lockfile.
