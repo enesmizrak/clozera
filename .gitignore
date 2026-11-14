@@ -47,13 +47,8 @@ Thumbs.db
 .cursor/
 
 # AI agent instruction files
-AGENTS.md
 CLAUDE.md
 GEMINI.md
 .CLAUDE.md
 
 *.backup
-
-# Project documentation
-docs/
-CONTEXT.md

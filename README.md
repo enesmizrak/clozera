@@ -16,6 +16,8 @@ Open-source language learning app built around cloze-based practice.
 
 See [doc/architecture.md](doc/architecture.md) for how the pieces fit together and why.
 
+Domain vocabulary lives in [CONTEXT.md](CONTEXT.md); architecture decisions are recorded in [docs/adr](docs/adr).
+
 ## Repository layout
 
 ```
