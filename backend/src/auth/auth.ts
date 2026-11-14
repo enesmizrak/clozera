@@ -96,7 +96,7 @@ export function createAuth(
     },
     advanced: {
       cookiePrefix: 'clozera',
-      // Cloud Run and the web app's /api proxy forward the client address.
+      // The web app's /api proxy replaces X-Forwarded-For with the one client address it verified (frontend/src/lib/client-address.ts). The API must not be publicly reachable.
       ipAddress: { ipAddressHeaders: ['x-forwarded-for'] },
     },
   })
