@@ -107,6 +107,7 @@ with another account are skipped and reported.
 | Sentence list | TanStack Table v9 with global filter and pagination |
 | Practice material chart | TanStack Charts (`src/components/library-chart.tsx`) |
 | Notes and descriptions | TanStack Markdown, raw HTML disabled |
+| Keyboard shortcuts | TanStack Hotkeys (`src/hooks/use-choice-hotkeys.ts`) |
 | Device preferences | Zustand with `persist` (`src/stores/preferences.ts`) |
 | Navigation state | URL search params (`/dashboard?tab=&q=`, `/practice?mode=&limit=`) |
 

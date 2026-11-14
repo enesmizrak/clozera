@@ -43,6 +43,10 @@ Koleksiyon açıklamaları ve cümle notları Markdown olarak (TanStack Markdown
 gösterilir; topluluk içerikleri başka öğrenicilerden geldiği için ham HTML kapalıdır.
 Cümle listesi TanStack Table ile aranır ve sayfalanır (25 satır).
 
+Klavye kısayolları TanStack Hotkeys ile tanımlanır. Çoktan seçmeli soruda 1–4 tuşları
+ilgili şıkkı seçer; odak bir metin alanındayken ya da diyalog/menü açıkken çalışmaz,
+basılı tutulan tuş tek cevap verir (`src/hooks/use-choice-hotkeys.ts`).
+
 ## Pratik mimarisi
 
 - `src/lib/practice-session.ts`: framework bağımsız cevap kontrolü, karıştırma,

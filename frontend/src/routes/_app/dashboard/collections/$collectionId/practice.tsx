@@ -10,6 +10,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
+import { useChoiceHotkeys } from '@/hooks/use-choice-hotkeys'
 import { type PracticeSession, usePracticeSession } from '@/hooks/use-practice-session'
 import { practiceModeOption } from '@/lib/practice-options'
 import {
@@ -31,10 +32,6 @@ export const Route = createFileRoute('/_app/dashboard/collections/$collectionId/
   validateSearch: practiceSearchSchema,
   component: PracticePage,
 })
-
-/** Keys 1–4 answer multiple choice questions unless focus is in a text control or a dialog is open. */
-const INTERACTIVE_SELECTOR =
-  'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="combobox"], [role="textbox"], [role="spinbutton"], [role="slider"]'
 
 function PracticePage() {
   const { collectionId } = Route.useParams()
@@ -191,30 +188,7 @@ function QuestionCard({
   }, [result, revealed, flashcard])
 
   const { choices, check } = session
-  useEffect(() => {
-    if (!choiceMode || result !== null) return
-    function onKeyDown(event: KeyboardEvent) {
-      if (
-        event.defaultPrevented ||
-        event.repeat ||
-        event.isComposing ||
-        event.ctrlKey ||
-        event.metaKey ||
-        event.altKey
-      )
-        return
-      if ((event.target as Element | null)?.closest?.(INTERACTIVE_SELECTOR)) return
-      if (document.querySelector('[role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"]'))
-        return
-      const choice = /^[1-4]$/.test(event.key) ? choices[Number(event.key) - 1] : undefined
-      if (choice) {
-        event.preventDefault()
-        check(choice.label)
-      }
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [choiceMode, result, choices, check])
+  useChoiceHotkeys(choices, choice => check(choice.label), choiceMode && result === null)
 
   return (
     <Card className="gap-0 overflow-hidden">

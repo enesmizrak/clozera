@@ -7,7 +7,7 @@ Open-source language learning app built around cloze-based practice.
 | Layer | Technology |
 | --- | --- |
 | Language | TypeScript 7 everywhere, Zod 4 schemas shared by API and UI |
-| Web app | TanStack Start (SSR) + Router, Query, DB, Form, Table, Charts, Markdown; React 19 |
+| Web app | TanStack Start (SSR) + Router, Query, DB, Form, Table, Charts, Markdown, Hotkeys; React 19 |
 | UI | shadcn/ui on Base UI, Tailwind CSS v4, `@shadcn/lint` design-system rules |
 | Client state | TanStack DB/Query for server data, URL search params for navigation, Zustand for device preferences |
 | API | Express 5, Mongoose 9, Better Auth, Effect 4 for typed service errors |
