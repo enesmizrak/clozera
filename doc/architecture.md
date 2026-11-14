@@ -139,8 +139,8 @@ Build both images from the repository root, for example
 `docker build -f frontend/Dockerfile.production .`. The web image is a Node server
 (`srvx`) rather than nginx, because it renders pages and proxies `/api`.
 
-`SESSION_SECRET` is still accepted as a fallback for `BETTER_AUTH_SECRET` while
-environments are migrated. `VITE_API_BASE_URL` is no longer used.
+`SESSION_SECRET` is no longer accepted; set `BETTER_AUTH_SECRET`.
+`VITE_API_BASE_URL` is no longer used.
 
 Upgrade order for an existing environment:
 
