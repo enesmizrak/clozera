@@ -152,8 +152,24 @@ network. Coolify shows an internal URL for the database, and Compose resources m
    is unreachable from outside (the VPS IP times out on any port). Eleven wrong-password
    logins from one network answer 429 on the 11th, and logging in from a phone on mobile
    data still works.
-7. Seed: run `npm run admin:upsert` and `npm run seed:initials` once inside the `api`
-   container, with `ADMIN_*` set for that run.
+7. Seed (one time, on the VPS). The production image has no dev dependencies and does not
+   contain `backend/data/seeds/initial-seed.json`, so the `npm run` scripts (whose pre-steps
+   build the emails package) do not work there. Call `node` directly instead. The working
+   directory in the image is `/app/backend`, and the container's own environment
+   (`MONGODB_CONNECTION_STRING` and so on) is used. Read the password without leaving it in
+   shell history:
+
+   ```bash
+   read -s ADMIN_PASSWORD
+   docker exec -e ADMIN_EMAIL=<admin email> -e ADMIN_USERNAME=<username> \
+     -e ADMIN_PASSWORD="$ADMIN_PASSWORD" <api-container> node scripts/upsert-admin.ts
+   unset ADMIN_PASSWORD
+   docker cp backend/data/seeds/initial-seed.json <api-container>:/tmp/initial-seed.json
+   docker exec -e ADMIN_EMAIL=<admin email> -e SEED_FILE=/tmp/initial-seed.json \
+     <api-container> node scripts/seed-initials.ts
+   ```
+
+   Run the `docker cp` from a checkout of this repository.
 8. Monthly: restore the latest R2 dump into a scratch database and check it.
 
 ## Upgrading existing installations
