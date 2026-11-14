@@ -92,6 +92,29 @@ describe('collections integration', () => {
     return { collection, group, pair }
   }
 
+  async function twoLearnersWithCollection(isPublic: boolean) {
+    const { pair } = await seedCollection()
+    const owner = await signUpAs(app, { username: 'owner', email: 'owner@example.com' })
+    const other = await signUpAs(app, { username: 'ada', email: 'ada@example.com' })
+    const collection = await Collection.create({
+      owner: owner.user._id,
+      languagePair: pair._id,
+      name: 'Owner Practice',
+      slug: 'owner-practice',
+      isOfficial: false,
+      isPublic,
+    })
+    const sentence = await CollectionSentence.create({
+      collection: collection._id,
+      owner: owner.user._id,
+      text: 'Ich {{reise}} morgen.',
+      translation: 'I travel tomorrow.',
+      cloze: 'reise',
+    })
+    await Collection.updateOne({ _id: collection._id }, { sentenceCount: 1 })
+    return { pair, owner, other, collection, sentence }
+  }
+
   it('lists collections for a language pair', async () => {
     await seedCollection()
     const { agent } = await signUpAs(app, {
@@ -657,5 +680,136 @@ describe('collections integration', () => {
 
     expect(response.status).toBe(403)
     expect(response.body.error.code).toBe('FORBIDDEN')
+  })
+
+  it('does not allow another learner to rename or change visibility of a public collection', async () => {
+    const { other, collection } = await twoLearnersWithCollection(true)
+
+    const response = await other.agent
+      .patch(`/api/collections/${collection._id.toString()}`)
+      .send({ name: 'Hijacked', visibility: 'private' })
+
+    expect(response.status).toBe(403)
+    expect(response.body.error.code).toBe('FORBIDDEN')
+    const stored = await Collection.findById(collection._id)
+    expect(stored?.name).toBe('Owner Practice')
+    expect(stored?.isPublic).toBe(true)
+  })
+
+  it('does not allow another learner to delete a public collection', async () => {
+    const { other, collection } = await twoLearnersWithCollection(true)
+
+    const response = await other.agent.delete(`/api/collections/${collection._id.toString()}`)
+
+    expect(response.status).toBe(403)
+    expect(response.body.error.code).toBe('FORBIDDEN')
+    expect(await Collection.exists({ _id: collection._id })).toBeTruthy()
+    expect(await CollectionSentence.countDocuments({ collection: collection._id })).toBe(1)
+  })
+
+  it('does not reveal or change another learner private collection on update', async () => {
+    const { other, collection } = await twoLearnersWithCollection(false)
+
+    const response = await other.agent
+      .patch(`/api/collections/${collection._id.toString()}`)
+      .send({ name: 'Hijacked' })
+
+    // Current behavior: writes answer 403 even for private collections; reads answer 404. See plans/004 maintenance notes.
+    expect(response.status).toBe(403)
+    expect(response.body.error.code).toBe('FORBIDDEN')
+    const stored = await Collection.findById(collection._id)
+    expect(stored?.name).toBe('Owner Practice')
+  })
+
+  it("does not allow another learner to edit a sentence in someone else's collection", async () => {
+    const { other, collection, sentence } = await twoLearnersWithCollection(true)
+
+    const response = await other.agent
+      .patch(`/api/collections/${collection._id.toString()}/sentences/${sentence._id.toString()}`)
+      .send({ text: 'Ich {{fahre}} morgen.', translation: 'I drive tomorrow.' })
+
+    expect(response.status).toBe(403)
+    expect(response.body.error.code).toBe('FORBIDDEN')
+    const stored = await CollectionSentence.findById(sentence._id)
+    expect(stored?.text).toBe('Ich {{reise}} morgen.')
+  })
+
+  it("does not allow another learner to delete a sentence in someone else's collection", async () => {
+    const { other, collection, sentence } = await twoLearnersWithCollection(true)
+
+    const response = await other.agent.delete(
+      `/api/collections/${collection._id.toString()}/sentences/${sentence._id.toString()}`
+    )
+
+    expect(response.status).toBe(403)
+    expect(response.body.error.code).toBe('FORBIDDEN')
+    expect(await CollectionSentence.exists({ _id: sentence._id })).toBeTruthy()
+  })
+
+  it('does not edit a sentence through a different owned collection', async () => {
+    const { pair, other, sentence } = await twoLearnersWithCollection(true)
+    const adaCollection = await Collection.create({
+      owner: other.user._id,
+      languagePair: pair._id,
+      name: 'Ada Practice',
+      slug: 'ada-practice',
+      isOfficial: false,
+      isPublic: false,
+    })
+
+    const response = await other.agent
+      .patch(`/api/collections/${adaCollection._id.toString()}/sentences/${sentence._id.toString()}`)
+      .send({ text: 'Ich {{fahre}} morgen.', translation: 'I drive tomorrow.' })
+
+    expect(response.status).toBe(404)
+    expect(response.body.error.code).toBe('NOT_FOUND')
+    const stored = await CollectionSentence.findById(sentence._id)
+    expect(stored?.text).toBe('Ich {{reise}} morgen.')
+  })
+
+  it('does not delete a sentence through a different owned collection', async () => {
+    const { pair, other, sentence } = await twoLearnersWithCollection(true)
+    const adaCollection = await Collection.create({
+      owner: other.user._id,
+      languagePair: pair._id,
+      name: 'Ada Practice',
+      slug: 'ada-practice',
+      isOfficial: false,
+      isPublic: false,
+    })
+
+    const response = await other.agent.delete(
+      `/api/collections/${adaCollection._id.toString()}/sentences/${sentence._id.toString()}`
+    )
+
+    expect(response.status).toBe(404)
+    expect(response.body.error.code).toBe('NOT_FOUND')
+    expect(await CollectionSentence.exists({ _id: sentence._id })).toBeTruthy()
+  })
+
+  it('deletes an owned sentence and updates the sentence count', async () => {
+    const { owner, collection, sentence } = await twoLearnersWithCollection(true)
+
+    const response = await owner.agent.delete(
+      `/api/collections/${collection._id.toString()}/sentences/${sentence._id.toString()}`
+    )
+
+    expect(response.status).toBe(204)
+    expect(await CollectionSentence.exists({ _id: sentence._id })).toBeNull()
+    const stored = await Collection.findById(collection._id)
+    expect(stored?.sentenceCount).toBe(0)
+  })
+
+  it('does not pin another learner private collection', async () => {
+    const { other, collection } = await twoLearnersWithCollection(false)
+
+    const response = await other.agent
+      .post('/api/dashboard/collections')
+      .send({ collectionId: collection._id.toString() })
+
+    expect(response.status).toBe(404)
+    expect(response.body.error.code).toBe('NOT_FOUND')
+    const user = await User.findById(other.user._id)
+    expect(user?.pinnedCollections).toHaveLength(0)
   })
 })
