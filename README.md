@@ -68,6 +68,8 @@ npm run test:integration
 npm run build
 ```
 
+CI (.github/workflows/ci.yml) runs the same commands on every push to main and every pull request, with integration tests against a MongoDB 8.0 service.
+
 `npm run test:integration` needs the local MongoDB and `backend/.env.test.local`
 (copy `backend/.env.test.example`).
 
