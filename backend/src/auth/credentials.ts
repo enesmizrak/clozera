@@ -1,7 +1,11 @@
+import { passwordSchema } from '@clozera/shared'
 import type { Auth } from './auth.ts'
 
-/** Sets (or creates) the email/password credential for a user, hashing with Better Auth. */
+/** Sets (or creates) the email/password credential and ends the user's sessions, as the web reset flow does. */
 export async function setCredentialPassword(auth: Auth, userId: string, password: string): Promise<void> {
+  const parsed = passwordSchema.safeParse(password)
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? 'Invalid password.')
+
   const context = await auth.$context
   const hash = await context.password.hash(password)
   const accounts = await context.internalAdapter.findAccounts(userId)
@@ -16,4 +20,6 @@ export async function setCredentialPassword(auth: Auth, userId: string, password
       password: hash,
     })
   }
+
+  await context.internalAdapter.deleteUserSessions(userId)
 }

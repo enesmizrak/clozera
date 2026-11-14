@@ -3,6 +3,9 @@ import type { Express } from 'express'
 import mongoose from 'mongoose'
 import request from 'supertest'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vite-plus/test'
+import { createAuth, mongoAuthDatabase } from '../auth/auth.ts'
+import { setCredentialPassword } from '../auth/credentials.ts'
+import { nativeDatabase } from '../db/connection.ts'
 import { migrateLegacyCredentials } from '../auth/legacy-migration.ts'
 import { testOutbox } from '../email/transport.ts'
 import { Language } from '../models/language.ts'
@@ -345,6 +348,34 @@ describe('accounts integration', () => {
         migrated: 0,
         conflicts: ['taken@example.com'],
       })
+    })
+  })
+
+  describe('operator password changes', () => {
+    const makeAuth = () => createAuth(mongoAuthDatabase(nativeDatabase(), mongoose.connection.getClient()))
+
+    it('ends existing sessions when an operator sets a password', async () => {
+      const { agent, user, email, password } = await signUpAs(app, {
+        username: 'operatortarget',
+        email: 'operatortarget@example.com',
+      })
+      expect((await agent.get('/api/session')).body.data).not.toBeNull()
+
+      await setCredentialPassword(makeAuth(), String(user._id), 'new-password-123')
+
+      expect((await agent.get('/api/session')).body).toEqual({ data: null })
+      const fresh = await request(app)
+        .post('/api/auth/sign-in/email')
+        .set(ORIGIN)
+        .send({ email, password: 'new-password-123' })
+      expect(fresh.status).toBe(200)
+      const old = await request(app).post('/api/auth/sign-in/email').set(ORIGIN).send({ email, password })
+      expect(old.status).not.toBe(200)
+    })
+
+    it('rejects passwords shorter than the policy', async () => {
+      const { user } = await signUpAs(app, { username: 'shortpw', email: 'shortpw@example.com' })
+      await expect(setCredentialPassword(makeAuth(), String(user._id), 'short')).rejects.toThrow(/at least 8/)
     })
   })
 })
