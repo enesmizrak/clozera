@@ -130,21 +130,10 @@ and dynamic class strings; arbitrary values are warnings.
 
 ## Deployment
 
-| Service | Image | Required environment |
-| --- | --- | --- |
-| API | `backend/Dockerfile.production` | `MONGODB_CONNECTION_STRING`, `BETTER_AUTH_SECRET` (32+ random characters), `FRONTEND_URL` (public web origin, also used for links and images in emails), `RESEND_API_KEY` (from Secret Manager), `EMAIL_FROM`, `EMAIL_REPLY_TO`. Optional: `BETTER_AUTH_URL`, `MONGODB_TRANSACTIONS=true` on Atlas. |
-| Web | `frontend/Dockerfile.production` | `API_INTERNAL_URL` (API base URL reachable from the web server), `PORT` (set by Cloud Run). |
+Two images are built from the repository root: `backend/Dockerfile.production` and
+`frontend/Dockerfile.production`. The web image is a Node server (`srvx`) rather than nginx,
+because it renders pages and proxies `/api`. `SESSION_SECRET` is no longer accepted; set
+`BETTER_AUTH_SECRET`. `VITE_API_BASE_URL` is no longer used.
 
-Build both images from the repository root, for example
-`docker build -f frontend/Dockerfile.production .`. The web image is a Node server
-(`srvx`) rather than nginx, because it renders pages and proxies `/api`.
-
-`SESSION_SECRET` is no longer accepted; set `BETTER_AUTH_SECRET`.
-`VITE_API_BASE_URL` is no longer used.
-
-Upgrade order for an existing environment:
-
-1. Deploy the API with `BETTER_AUTH_SECRET` and the web app with `API_INTERNAL_URL`.
-2. Run `npm run auth:migrate-legacy -w backend` against the database, review the dry run,
-   then run it again with `-- --apply --notify`.
-3. Optionally drop the unused `sessions` collection.
+See [deployment.md](deployment.md) for the Coolify/Cloudflare setup, environment, database
+and upgrade steps.

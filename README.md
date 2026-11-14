@@ -80,6 +80,7 @@ CI (.github/workflows/ci.yml) runs the same commands on every push to main and e
 `docker compose up --build` runs MongoDB, the API and the web app. Images build from the
 repository root because both applications use the shared workspace. See
 [doc/docker-usage.md](doc/docker-usage.md).
+Production runs on Coolify behind Cloudflare; see [doc/deployment.md](doc/deployment.md).
 
 Local Docker tracks the latest MongoDB 8.0 patch with `mongo:8.0`, matching the
 Atlas release series. Before changing the MongoDB release series or data volume,

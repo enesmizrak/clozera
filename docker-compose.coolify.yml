@@ -1,0 +1,37 @@
+# Production stack for Coolify. Set the public domain on `web` in the Coolify UI.
+# `api` has no domain and publishes no port: only `web` reaches it, over this network.
+services:
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile.production
+    environment:
+      API_INTERNAL_URL: http://api:3000
+      CLIENT_IP_HEADER: ${CLIENT_IP_HEADER:-cf-connecting-ip}
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.production
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      FRONTEND_URL: ${FRONTEND_URL:?set the public web origin}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set a 32+ character secret}
+      MONGODB_CONNECTION_STRING: ${MONGODB_CONNECTION_STRING:?set the MongoDB URI}
+      MONGODB_TRANSACTIONS: ${MONGODB_TRANSACTIONS:-false}
+      EMAIL_TRANSPORT: resend
+      RESEND_API_KEY: ${RESEND_API_KEY:?set the Resend API key}
+      EMAIL_FROM: ${EMAIL_FROM:?set the sender}
+      EMAIL_REPLY_TO: ${EMAIL_REPLY_TO:?set the reply-to address}
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/health/ready', { signal: AbortSignal.timeout(3000) }).then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    restart: unless-stopped
