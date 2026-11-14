@@ -109,8 +109,17 @@ export const collectionQuery = (collectionId: string) =>
     queryFn: ({ signal }) => api.collection(collectionId, signal),
   })
 
+let loadedFor: string | null = null
+
+/** Drops learner data loaded for someone else, e.g. after a different learner signs in on this tab. */
+export async function ensureLearnerScope(userId: string): Promise<void> {
+  if (loadedFor !== null && loadedFor !== userId) await resetLearnerData()
+  loadedFor = userId
+}
+
 /** Learner data must not survive a sign-out: drop every collection and cached query. */
 export async function resetLearnerData(): Promise<void> {
+  loadedFor = null
   const collections = [...libraries.values(), ...sentenceLists.values()]
   libraries.clear()
   sentenceLists.clear()

@@ -1,4 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
+import { onSessionLost } from '@/data/learner-session'
 import { ApiError } from '@/lib/api'
 
 function makeQueryClient() {
@@ -21,5 +22,9 @@ let browserQueryClient: QueryClient | undefined
  */
 export function getQueryClient(): QueryClient {
   if (typeof window === 'undefined') return makeQueryClient()
-  return (browserQueryClient ??= makeQueryClient())
+  if (!browserQueryClient) {
+    browserQueryClient = makeQueryClient()
+    onSessionLost(() => browserQueryClient?.setQueryData(['session'], null))
+  }
+  return browserQueryClient
 }

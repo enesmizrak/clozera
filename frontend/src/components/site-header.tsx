@@ -15,6 +15,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { resetLearnerData } from '@/data/collections'
 import { languagePairsQuery } from '@/data/languages'
+import { endLearnerSession } from '@/data/learner-session'
 import { sessionQuery, useSessionUser } from '@/data/session'
 import { api, errorMessage } from '@/lib/api'
 import { authClient } from '@/lib/auth-client'
@@ -106,10 +107,12 @@ export function AppHeader() {
       return
     }
     // Leave the app first so no live query still reads the collections being dropped.
-    queryClient.setQueryData(sessionQuery.queryKey, null)
-    await router.navigate({ to: '/' })
-    await resetLearnerData()
-    await router.invalidate()
+    await endLearnerSession({
+      clearSession: () => queryClient.setQueryData(sessionQuery.queryKey, null),
+      navigate: () => router.navigate({ to: '/' }),
+      reset: resetLearnerData,
+      invalidate: () => router.invalidate(),
+    })
   }
 
   return (

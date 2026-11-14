@@ -15,6 +15,7 @@ import type {
 } from '@clozera/shared'
 import { createIsomorphicFn } from '@tanstack/react-start'
 import { getRequestHeader } from '@tanstack/react-start/server'
+import { notifySessionLost } from '@/data/learner-session'
 
 export class ApiError extends Error {
   readonly status: number
@@ -76,7 +77,10 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 
   if (response.status === 204) return undefined as T
   const payload = (await response.json().catch(() => ({}))) as T & Partial<ApiErrorBody>
-  if (!response.ok) throw new ApiError(response.status, payload.error)
+  if (!response.ok) {
+    if (response.status === 401 && typeof window !== 'undefined') notifySessionLost()
+    throw new ApiError(response.status, payload.error)
+  }
   return payload
 }
 
