@@ -28,7 +28,8 @@ dist/
 !.env.*.example
 
 # Docker data
-/backend/data/
+/backend/data/*
+!/backend/data/seeds/
 
 # Test Coverage
 coverage

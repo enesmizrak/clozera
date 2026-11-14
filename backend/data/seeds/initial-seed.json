@@ -1,0 +1,1712 @@
+{
+  "languages": [
+    {
+      "code": "de",
+      "iso3": "deu",
+      "name": "German",
+      "nativeName": "Deutsch",
+      "flagIso": "de",
+      "ttsLocale": "de-DE"
+    },
+    {
+      "code": "en",
+      "iso3": "eng",
+      "name": "English",
+      "nativeName": "English",
+      "flagIso": "gb",
+      "ttsLocale": "en-US"
+    },
+    {
+      "code": "tr",
+      "iso3": "tur",
+      "name": "Turkish",
+      "nativeName": "Türkçe",
+      "flagIso": "tr",
+      "ttsLocale": "tr-TR"
+    }
+  ],
+  "languagePairs": [
+    {
+      "slug": "deu-eng",
+      "targetLanguageIso3": "deu",
+      "baseLanguageIso3": "eng",
+      "name": "German from English",
+      "active": true
+    },
+    {
+      "slug": "deu-tr",
+      "targetLanguageIso3": "deu",
+      "baseLanguageIso3": "tur",
+      "name": "German from Turkish",
+      "active": true
+    },
+    {
+      "slug": "eng-tr",
+      "targetLanguageIso3": "eng",
+      "baseLanguageIso3": "tur",
+      "name": "English from Turkish",
+      "active": true
+    }
+  ],
+  "collectionPairs": [
+    {
+      "languagePairSlug": "deu-eng",
+      "groups": [
+        {
+          "name": "Fluency Fast Track",
+          "type": "fast_track",
+          "description": "Fast-start collections for active recall practice.",
+          "order": 1
+        },
+        {
+          "name": "CEFR",
+          "type": "cefr",
+          "description": "Official collections organized by CEFR level.",
+          "order": 2
+        }
+      ],
+      "collections": [
+        {
+          "groupType": "fast_track",
+          "name": "Fluency Fast Track 1",
+          "slug": "fluency-fast-track-1",
+          "description": "Essential German sentence patterns for the first practice loop.",
+          "type": "fast_track",
+          "level": "A1",
+          "order": 1,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "fast_track",
+          "name": "Fluency Fast Track 2",
+          "slug": "fluency-fast-track-2",
+          "description": "Everyday German sentences with slightly longer context.",
+          "type": "fast_track",
+          "level": "A1",
+          "order": 2,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "cefr",
+          "name": "A1",
+          "slug": "a1",
+          "description": "Beginner CEFR practice for simple German statements and questions.",
+          "type": "cefr",
+          "level": "A1",
+          "order": 1,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "cefr",
+          "name": "A2",
+          "slug": "a2",
+          "description": "Elementary CEFR practice with reasons, plans, and everyday details.",
+          "type": "cefr",
+          "level": "A2",
+          "order": 2,
+          "isOfficial": true,
+          "isPublic": true
+        }
+      ],
+      "sentencesByCollectionSlug": {
+        "fluency-fast-track-1": [
+          {
+            "text": "Ich {{bin}} zu Hause.",
+            "translation": "I am at home.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bist", "bin", "ist", "sind"]
+          },
+          {
+            "text": "Du {{hast}} Zeit.",
+            "translation": "You have time.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["habe", "hat", "hast", "haben"]
+          },
+          {
+            "text": "Wir {{gehen}} heute einkaufen.",
+            "translation": "We are going shopping today.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geht", "gehen", "gehe", "gehst"]
+          },
+          {
+            "text": "Sie {{kommt}} aus Berlin.",
+            "translation": "She comes from Berlin.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["komme", "kommst", "kommt", "kommen"]
+          },
+          {
+            "text": "Das Wetter {{ist}} schön.",
+            "translation": "The weather is nice.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bist", "sind", "ist", "seid"]
+          },
+          {
+            "text": "Ich {{trinke}} gern Kaffee.",
+            "translation": "I like drinking coffee.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["trinkt", "trinke", "trinkst", "trinken"]
+          },
+          {
+            "text": "Der Zug {{fährt}} pünktlich ab.",
+            "translation": "The train leaves on time.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["fährt", "fahren", "fahre", "fährst"]
+          },
+          {
+            "text": "Meine Schwester {{lernt}} Deutsch.",
+            "translation": "My sister is learning German.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["lerne", "lernst", "lernt", "lernen"]
+          },
+          {
+            "text": "Wir {{wohnen}} in einer kleinen Wohnung.",
+            "translation": "We live in a small apartment.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["wohnt", "wohne", "wohnst", "wohnen"]
+          },
+          {
+            "text": "Ich {{brauche}} ein neues Heft.",
+            "translation": "I need a new notebook.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["brauche", "brauchst", "braucht", "brauchen"]
+          },
+          {
+            "text": "Er {{arbeitet}} im Büro.",
+            "translation": "He works in the office.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["arbeite", "arbeitest", "arbeitet", "arbeiten"]
+          },
+          {
+            "text": "Die Kinder {{spielen}} im Park.",
+            "translation": "The children are playing in the park.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["spiele", "spielst", "spielt", "spielen"]
+          },
+          {
+            "text": "Ich {{finde}} die Antwort.",
+            "translation": "I find the answer.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["finde", "findest", "findet", "finden"]
+          },
+          {
+            "text": "Du {{sprichst}} sehr klar.",
+            "translation": "You speak very clearly.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["spreche", "sprichst", "spricht", "sprechen"]
+          },
+          {
+            "text": "Wir {{essen}} um sieben Uhr.",
+            "translation": "We eat at seven o’clock.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["esse", "isst", "essen", "esst"]
+          },
+          {
+            "text": "Sie {{liest}} ein kurzes Buch.",
+            "translation": "She is reading a short book.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["lese", "liest", "lesen", "lest"]
+          },
+          {
+            "text": "Ich {{nehme}} den Bus.",
+            "translation": "I take the bus.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["nehme", "nimmst", "nimmt", "nehmen"]
+          },
+          {
+            "text": "Der Hund {{schläft}} unter dem Tisch.",
+            "translation": "The dog sleeps under the table.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["schlafe", "schläfst", "schläft", "schlafen"]
+          },
+          {
+            "text": "Wir {{machen}} eine Pause.",
+            "translation": "We are taking a break.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["mache", "machst", "macht", "machen"]
+          },
+          {
+            "text": "Ich {{verstehe}} die Frage.",
+            "translation": "I understand the question.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["verstehe", "verstehst", "versteht", "verstehen"]
+          }
+        ],
+        "fluency-fast-track-2": [
+          {
+            "text": "Kannst du mir bitte {{helfen}}?",
+            "translation": "Can you please help me?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["helfen", "hören", "holen", "halten"]
+          },
+          {
+            "text": "Ich möchte morgen früh {{aufstehen}}.",
+            "translation": "I want to get up early tomorrow.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["aufstehen", "einkaufen", "ausgehen", "anrufen"]
+          },
+          {
+            "text": "Wir müssen die Tickets online {{kaufen}}.",
+            "translation": "We have to buy the tickets online.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["kaufen", "kochen", "kennen", "kommen"]
+          },
+          {
+            "text": "Sie hat gestern ihre Freundin {{besucht}}.",
+            "translation": "She visited her friend yesterday.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["besucht", "bezahlt", "bestellt", "bekommen"]
+          },
+          {
+            "text": "Ich habe meine Tasche im Zug {{vergessen}}.",
+            "translation": "I forgot my bag on the train.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["vergessen", "verloren", "verkauft", "verstanden"]
+          },
+          {
+            "text": "Der Kellner bringt gleich die {{Rechnung}}.",
+            "translation": "The waiter will bring the bill soon.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Rechnung", "Zeitung", "Wohnung", "Meinung"]
+          },
+          {
+            "text": "Wir warten vor dem {{Eingang}}.",
+            "translation": "We are waiting in front of the entrance.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Ausgang", "Eingang", "Umgang", "Anfang"]
+          },
+          {
+            "text": "Ich rufe dich später noch einmal {{an}}.",
+            "translation": "I will call you again later.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["an", "auf", "aus", "mit"]
+          },
+          {
+            "text": "Das Museum ist montags {{geschlossen}}.",
+            "translation": "The museum is closed on Mondays.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geschlossen", "geöffnet", "gefunden", "gegangen"]
+          },
+          {
+            "text": "Sie trägt heute einen blauen {{Mantel}}.",
+            "translation": "She is wearing a blue coat today.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Mantel", "Teller", "Schlüssel", "Koffer"]
+          },
+          {
+            "text": "Wir haben genug Zeit für einen {{Spaziergang}}.",
+            "translation": "We have enough time for a walk.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Spaziergang", "Vorschlag", "Feiertag", "Unterricht"]
+          },
+          {
+            "text": "Ich muss noch meine E-Mails {{beantworten}}.",
+            "translation": "I still have to answer my emails.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["beantworten", "benutzen", "besuchen", "bezahlen"]
+          },
+          {
+            "text": "Der Supermarkt öffnet um acht {{Uhr}}.",
+            "translation": "The supermarket opens at eight o’clock.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Uhr", "Tag", "Jahr", "Mal"]
+          },
+          {
+            "text": "Kann ich mit Karte {{bezahlen}}?",
+            "translation": "Can I pay by card?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bezahlen", "bestellen", "beginnen", "bleiben"]
+          },
+          {
+            "text": "Wir haben den ganzen Abend {{geredet}}.",
+            "translation": "We talked all evening.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geredet", "gereist", "gerechnet", "gerufen"]
+          },
+          {
+            "text": "Ich suche einen ruhigen Platz zum {{Lernen}}.",
+            "translation": "I am looking for a quiet place to study.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Lernen", "Laufen", "Lachen", "Lesen"]
+          },
+          {
+            "text": "Die Lampe steht neben dem {{Sofa}}.",
+            "translation": "The lamp is next to the sofa.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Sofa", "Fenster", "Regal", "Bett"]
+          },
+          {
+            "text": "Er erklärt die Aufgabe sehr {{geduldig}}.",
+            "translation": "He explains the task very patiently.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geduldig", "gefährlich", "gewöhnlich", "gesund"]
+          },
+          {
+            "text": "Wir treffen uns vor dem Kino um {{sechs}}.",
+            "translation": "We are meeting in front of the cinema at six.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["sechs", "sieben", "acht", "zehn"]
+          },
+          {
+            "text": "Ich freue mich auf das {{Wochenende}}.",
+            "translation": "I am looking forward to the weekend.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Wochenende", "Wörterbuch", "Wiedersehen", "Wohnzimmer"]
+          }
+        ],
+        "a1": [
+          {
+            "text": "Mein Name {{ist}} Lena.",
+            "translation": "My name is Lena.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["ist", "bin", "hat", "wird"]
+          },
+          {
+            "text": "Ich komme aus der {{Türkei}}.",
+            "translation": "I come from Turkey.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Türkei", "Schule", "Straße", "Stadt"]
+          },
+          {
+            "text": "Wie {{heißt}} du?",
+            "translation": "What is your name?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["heißt", "wohnst", "machst", "gehst"]
+          },
+          {
+            "text": "Ich wohne in {{Hamburg}}.",
+            "translation": "I live in Hamburg.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Hamburg", "Montag", "Deutsch", "Kaffee"]
+          },
+          {
+            "text": "Das ist mein {{Bruder}}.",
+            "translation": "This is my brother.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bruder", "Tisch", "Apfel", "Zug"]
+          },
+          {
+            "text": "Ich habe zwei {{Kinder}}.",
+            "translation": "I have two children.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Kinder", "Karten", "Bücher", "Zimmer"]
+          },
+          {
+            "text": "Heute ist {{Montag}}.",
+            "translation": "Today is Monday.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Montag", "Sommer", "Morgen", "Abend"]
+          },
+          {
+            "text": "Der Kaffee ist sehr {{heiß}}.",
+            "translation": "The coffee is very hot.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["heiß", "kalt", "alt", "kurz"]
+          },
+          {
+            "text": "Ich kaufe ein {{Brot}}.",
+            "translation": "I buy a loaf of bread.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Brot", "Auto", "Haus", "Bild"]
+          },
+          {
+            "text": "Wo ist der {{Bahnhof}}?",
+            "translation": "Where is the train station?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bahnhof", "Garten", "Stuhl", "Käse"]
+          },
+          {
+            "text": "Ich spreche ein bisschen {{Deutsch}}.",
+            "translation": "I speak a little German.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Deutsch", "Musik", "Wasser", "Sport"]
+          },
+          {
+            "text": "Meine Mutter ist sehr {{nett}}.",
+            "translation": "My mother is very kind.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["nett", "neu", "leer", "laut"]
+          },
+          {
+            "text": "Wir trinken kaltes {{Wasser}}.",
+            "translation": "We drink cold water.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Wasser", "Fenster", "Messer", "Zimmer"]
+          },
+          {
+            "text": "Ich sehe einen roten {{Apfel}}.",
+            "translation": "I see a red apple.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Apfel", "Teller", "Schuh", "Stift"]
+          },
+          {
+            "text": "Der Unterricht beginnt um {{neun}}.",
+            "translation": "The lesson begins at nine.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["neun", "neu", "nah", "nur"]
+          },
+          {
+            "text": "Ich schreibe eine kurze {{Nachricht}}.",
+            "translation": "I write a short message.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Nachricht", "Geschichte", "Adresse", "Nummer"]
+          },
+          {
+            "text": "Das Zimmer ist sehr {{hell}}.",
+            "translation": "The room is very bright.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["hell", "schnell", "voll", "still"]
+          },
+          {
+            "text": "Meine Schuhe sind {{schwarz}}.",
+            "translation": "My shoes are black.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["schwarz", "weiß", "grün", "gelb"]
+          },
+          {
+            "text": "Ich nehme heute den {{Bus}}.",
+            "translation": "I am taking the bus today.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bus", "Brief", "Ball", "Baum"]
+          },
+          {
+            "text": "Wir lernen neue {{Wörter}}.",
+            "translation": "We are learning new words.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Wörter", "Bilder", "Türen", "Länder"]
+          }
+        ],
+        "a2": [
+          {
+            "text": "Ich bleibe zu Hause, weil ich {{krank}} bin.",
+            "translation": "I am staying home because I am sick.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["krank", "schnell", "billig", "fertig"]
+          },
+          {
+            "text": "Nachdem ich gefrühstückt habe, {{gehe}} ich zur Arbeit.",
+            "translation": "After I have breakfast, I go to work.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gehe", "ging", "gehen", "gehst"]
+          },
+          {
+            "text": "Kannst du das Fenster bitte {{öffnen}}?",
+            "translation": "Can you please open the window?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["öffnen", "schließen", "finden", "tragen"]
+          },
+          {
+            "text": "Ich habe gestern einen Film {{gesehen}}.",
+            "translation": "I watched a movie yesterday.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gesehen", "gesucht", "gesagt", "gestellt"]
+          },
+          {
+            "text": "Wir möchten im Sommer nach Wien {{reisen}}.",
+            "translation": "We would like to travel to Vienna in summer.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["reisen", "reichen", "rufen", "reden"]
+          },
+          {
+            "text": "Der Termin wurde auf Freitag {{verschoben}}.",
+            "translation": "The appointment was moved to Friday.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["verschoben", "vergessen", "verkauft", "verstanden"]
+          },
+          {
+            "text": "Ich interessiere mich für moderne {{Kunst}}.",
+            "translation": "I am interested in modern art.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Kunst", "Kunde", "Küche", "Karte"]
+          },
+          {
+            "text": "Er hat mir eine lange Nachricht {{geschickt}}.",
+            "translation": "He sent me a long message.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geschickt", "geschlafen", "geschnitten", "geschrieben"]
+          },
+          {
+            "text": "Obwohl es regnet, gehen wir {{spazieren}}.",
+            "translation": "Although it is raining, we are going for a walk.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["spazieren", "studieren", "sortieren", "probieren"]
+          },
+          {
+            "text": "Ich muss meine Wohnung bis morgen {{aufräumen}}.",
+            "translation": "I have to tidy my apartment by tomorrow.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["aufräumen", "aufstehen", "aufhören", "aufmachen"]
+          },
+          {
+            "text": "Die Reise dauert ungefähr drei {{Stunden}}.",
+            "translation": "The trip takes about three hours.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Stunden", "Stufen", "Stücke", "Stimmen"]
+          },
+          {
+            "text": "Ich habe vergessen, den Herd {{auszumachen}}.",
+            "translation": "I forgot to turn off the stove.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["auszumachen", "anzumachen", "mitzubringen", "einzukaufen"]
+          },
+          {
+            "text": "Sie bewirbt sich um eine neue {{Stelle}}.",
+            "translation": "She is applying for a new position.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Stelle", "Straße", "Stimme", "Stunde"]
+          },
+          {
+            "text": "Wir vergleichen die Preise vor dem {{Kauf}}.",
+            "translation": "We compare the prices before buying.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Kauf", "Kurs", "Koffer", "Klang"]
+          },
+          {
+            "text": "Ich habe den Schlüssel im Auto {{gelassen}}.",
+            "translation": "I left the key in the car.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gelassen", "gelesen", "gelaufen", "geladen"]
+          },
+          {
+            "text": "Der Arzt empfiehlt mehr {{Bewegung}}.",
+            "translation": "The doctor recommends more exercise.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bewegung", "Bezahlung", "Bedeutung", "Begegnung"]
+          },
+          {
+            "text": "Wir sollten früher mit der Planung {{beginnen}}.",
+            "translation": "We should start planning earlier.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["beginnen", "behalten", "bekommen", "besuchen"]
+          },
+          {
+            "text": "Ich habe mich über die Einladung sehr {{gefreut}}.",
+            "translation": "I was very happy about the invitation.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gefreut", "gefragt", "gefolgt", "gefeiert"]
+          },
+          {
+            "text": "Die Verkäuferin hat mir die Größe {{empfohlen}}.",
+            "translation": "The saleswoman recommended the size to me.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["empfohlen", "erfunden", "erzählt", "erklärt"]
+          },
+          {
+            "text": "Wir treffen uns, sobald du {{ankommst}}.",
+            "translation": "We will meet as soon as you arrive.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["ankommst", "anfängst", "aufräumst", "anrufst"]
+          }
+        ]
+      }
+    },
+    {
+      "languagePairSlug": "deu-tr",
+      "groups": [
+        {
+          "name": "Fluency Fast Track",
+          "type": "fast_track",
+          "description": "Akıcı pratik için hızlı başlangıç koleksiyonları.",
+          "order": 1
+        },
+        {
+          "name": "CEFR",
+          "type": "cefr",
+          "description": "CEFR seviyelerine göre düzenlenmiş resmi koleksiyonlar.",
+          "order": 2
+        }
+      ],
+      "collections": [
+        {
+          "groupType": "fast_track",
+          "name": "Akıcılık Hızlı Başlangıç 1",
+          "slug": "fluency-fast-track-1",
+          "description": "İlk alıştırma döngüsü için temel Almanca cümle kalıpları.",
+          "type": "fast_track",
+          "level": "A1",
+          "order": 1,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "fast_track",
+          "name": "Akıcılık Hızlı Başlangıç 2",
+          "slug": "fluency-fast-track-2",
+          "description": "Biraz daha uzun bağlamlı günlük Almanca cümleler.",
+          "type": "fast_track",
+          "level": "A1",
+          "order": 2,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "cefr",
+          "name": "A1",
+          "slug": "a1",
+          "description": "Basit Almanca ifadeler ve sorular için başlangıç CEFR alıştırmaları.",
+          "type": "cefr",
+          "level": "A1",
+          "order": 1,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "cefr",
+          "name": "A2",
+          "slug": "a2",
+          "description": "Nedenler, planlar ve günlük ayrıntılarla temel CEFR alıştırmaları.",
+          "type": "cefr",
+          "level": "A2",
+          "order": 2,
+          "isOfficial": true,
+          "isPublic": true
+        }
+      ],
+      "sentencesByCollectionSlug": {
+        "fluency-fast-track-1": [
+          {
+            "text": "Ich {{bin}} zu Hause.",
+            "translation": "Ben evdeyim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bist", "bin", "ist", "sind"]
+          },
+          {
+            "text": "Du {{hast}} Zeit.",
+            "translation": "Senin zamanın var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["habe", "hat", "hast", "haben"]
+          },
+          {
+            "text": "Wir {{gehen}} heute einkaufen.",
+            "translation": "Bugün alışverişe gidiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geht", "gehen", "gehe", "gehst"]
+          },
+          {
+            "text": "Sie {{kommt}} aus Berlin.",
+            "translation": "O Berlin’den geliyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["komme", "kommst", "kommt", "kommen"]
+          },
+          {
+            "text": "Das Wetter {{ist}} schön.",
+            "translation": "Hava güzel.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bist", "sind", "ist", "seid"]
+          },
+          {
+            "text": "Ich {{trinke}} gern Kaffee.",
+            "translation": "Kahve içmeyi severim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["trinkt", "trinke", "trinkst", "trinken"]
+          },
+          {
+            "text": "Der Zug {{fährt}} pünktlich ab.",
+            "translation": "Tren zamanında kalkıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["fährt", "fahren", "fahre", "fährst"]
+          },
+          {
+            "text": "Meine Schwester {{lernt}} Deutsch.",
+            "translation": "Kız kardeşim Almanca öğreniyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["lerne", "lernst", "lernt", "lernen"]
+          },
+          {
+            "text": "Wir {{wohnen}} in einer kleinen Wohnung.",
+            "translation": "Küçük bir dairede yaşıyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["wohnt", "wohne", "wohnst", "wohnen"]
+          },
+          {
+            "text": "Ich {{brauche}} ein neues Heft.",
+            "translation": "Yeni bir deftere ihtiyacım var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["brauche", "brauchst", "braucht", "brauchen"]
+          },
+          {
+            "text": "Er {{arbeitet}} im Büro.",
+            "translation": "O ofiste çalışıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["arbeite", "arbeitest", "arbeitet", "arbeiten"]
+          },
+          {
+            "text": "Die Kinder {{spielen}} im Park.",
+            "translation": "Çocuklar parkta oynuyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["spiele", "spielst", "spielt", "spielen"]
+          },
+          {
+            "text": "Ich {{finde}} die Antwort.",
+            "translation": "Cevabı buluyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["finde", "findest", "findet", "finden"]
+          },
+          {
+            "text": "Du {{sprichst}} sehr klar.",
+            "translation": "Çok net konuşuyorsun.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["spreche", "sprichst", "spricht", "sprechen"]
+          },
+          {
+            "text": "Wir {{essen}} um sieben Uhr.",
+            "translation": "Saat yedide yemek yiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["esse", "isst", "essen", "esst"]
+          },
+          {
+            "text": "Sie {{liest}} ein kurzes Buch.",
+            "translation": "O kısa bir kitap okuyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["lese", "liest", "lesen", "lest"]
+          },
+          {
+            "text": "Ich {{nehme}} den Bus.",
+            "translation": "Otobüse biniyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["nehme", "nimmst", "nimmt", "nehmen"]
+          },
+          {
+            "text": "Der Hund {{schläft}} unter dem Tisch.",
+            "translation": "Köpek masanın altında uyuyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["schlafe", "schläfst", "schläft", "schlafen"]
+          },
+          {
+            "text": "Wir {{machen}} eine Pause.",
+            "translation": "Mola veriyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["mache", "machst", "macht", "machen"]
+          },
+          {
+            "text": "Ich {{verstehe}} die Frage.",
+            "translation": "Soruyu anlıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["verstehe", "verstehst", "versteht", "verstehen"]
+          }
+        ],
+        "fluency-fast-track-2": [
+          {
+            "text": "Kannst du mir bitte {{helfen}}?",
+            "translation": "Lütfen bana yardım edebilir misin?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["helfen", "hören", "holen", "halten"]
+          },
+          {
+            "text": "Ich möchte morgen früh {{aufstehen}}.",
+            "translation": "Yarın erken kalkmak istiyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["aufstehen", "einkaufen", "ausgehen", "anrufen"]
+          },
+          {
+            "text": "Wir müssen die Tickets online {{kaufen}}.",
+            "translation": "Biletleri internetten satın almalıyız.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["kaufen", "kochen", "kennen", "kommen"]
+          },
+          {
+            "text": "Sie hat gestern ihre Freundin {{besucht}}.",
+            "translation": "Dün arkadaşını ziyaret etti.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["besucht", "bezahlt", "bestellt", "bekommen"]
+          },
+          {
+            "text": "Ich habe meine Tasche im Zug {{vergessen}}.",
+            "translation": "Çantamı trende unuttum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["vergessen", "verloren", "verkauft", "verstanden"]
+          },
+          {
+            "text": "Der Kellner bringt gleich die {{Rechnung}}.",
+            "translation": "Garson birazdan hesabı getirecek.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Rechnung", "Zeitung", "Wohnung", "Meinung"]
+          },
+          {
+            "text": "Wir warten vor dem {{Eingang}}.",
+            "translation": "Girişin önünde bekliyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Ausgang", "Eingang", "Umgang", "Anfang"]
+          },
+          {
+            "text": "Ich rufe dich später noch einmal {{an}}.",
+            "translation": "Seni sonra tekrar arayacağım.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["an", "auf", "aus", "mit"]
+          },
+          {
+            "text": "Das Museum ist montags {{geschlossen}}.",
+            "translation": "Müze pazartesileri kapalıdır.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geschlossen", "geöffnet", "gefunden", "gegangen"]
+          },
+          {
+            "text": "Sie trägt heute einen blauen {{Mantel}}.",
+            "translation": "Bugün mavi bir palto giyiyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Mantel", "Teller", "Schlüssel", "Koffer"]
+          },
+          {
+            "text": "Wir haben genug Zeit für einen {{Spaziergang}}.",
+            "translation": "Bir yürüyüş için yeterli zamanımız var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Spaziergang", "Vorschlag", "Feiertag", "Unterricht"]
+          },
+          {
+            "text": "Ich muss noch meine E-Mails {{beantworten}}.",
+            "translation": "E-postalarımı hâlâ yanıtlamam gerekiyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["beantworten", "benutzen", "besuchen", "bezahlen"]
+          },
+          {
+            "text": "Der Supermarkt öffnet um acht {{Uhr}}.",
+            "translation": "Süpermarket saat sekizde açılıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Uhr", "Tag", "Jahr", "Mal"]
+          },
+          {
+            "text": "Kann ich mit Karte {{bezahlen}}?",
+            "translation": "Kartla ödeyebilir miyim?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bezahlen", "bestellen", "beginnen", "bleiben"]
+          },
+          {
+            "text": "Wir haben den ganzen Abend {{geredet}}.",
+            "translation": "Bütün akşam konuştuk.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geredet", "gereist", "gerechnet", "gerufen"]
+          },
+          {
+            "text": "Ich suche einen ruhigen Platz zum {{Lernen}}.",
+            "translation": "Ders çalışmak için sessiz bir yer arıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Lernen", "Laufen", "Lachen", "Lesen"]
+          },
+          {
+            "text": "Die Lampe steht neben dem {{Sofa}}.",
+            "translation": "Lamba kanepenin yanında duruyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Sofa", "Fenster", "Regal", "Bett"]
+          },
+          {
+            "text": "Er erklärt die Aufgabe sehr {{geduldig}}.",
+            "translation": "Görevi çok sabırlı bir şekilde açıklıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geduldig", "gefährlich", "gewöhnlich", "gesund"]
+          },
+          {
+            "text": "Wir treffen uns vor dem Kino um {{sechs}}.",
+            "translation": "Saat altıda sinemanın önünde buluşuyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["sechs", "sieben", "acht", "zehn"]
+          },
+          {
+            "text": "Ich freue mich auf das {{Wochenende}}.",
+            "translation": "Hafta sonunu dört gözle bekliyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Wochenende", "Wörterbuch", "Wiedersehen", "Wohnzimmer"]
+          }
+        ],
+        "a1": [
+          {
+            "text": "Mein Name {{ist}} Lena.",
+            "translation": "Benim adım Lena.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["ist", "bin", "hat", "wird"]
+          },
+          {
+            "text": "Ich komme aus der {{Türkei}}.",
+            "translation": "Ben Türkiye’den geliyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Türkei", "Schule", "Straße", "Stadt"]
+          },
+          {
+            "text": "Wie {{heißt}} du?",
+            "translation": "Senin adın ne?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["heißt", "wohnst", "machst", "gehst"]
+          },
+          {
+            "text": "Ich wohne in {{Hamburg}}.",
+            "translation": "Hamburg’da yaşıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Hamburg", "Montag", "Deutsch", "Kaffee"]
+          },
+          {
+            "text": "Das ist mein {{Bruder}}.",
+            "translation": "Bu benim erkek kardeşim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bruder", "Tisch", "Apfel", "Zug"]
+          },
+          {
+            "text": "Ich habe zwei {{Kinder}}.",
+            "translation": "İki çocuğum var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Kinder", "Karten", "Bücher", "Zimmer"]
+          },
+          {
+            "text": "Heute ist {{Montag}}.",
+            "translation": "Bugün pazartesi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Montag", "Sommer", "Morgen", "Abend"]
+          },
+          {
+            "text": "Der Kaffee ist sehr {{heiß}}.",
+            "translation": "Kahve çok sıcak.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["heiß", "kalt", "alt", "kurz"]
+          },
+          {
+            "text": "Ich kaufe ein {{Brot}}.",
+            "translation": "Bir ekmek alıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Brot", "Auto", "Haus", "Bild"]
+          },
+          {
+            "text": "Wo ist der {{Bahnhof}}?",
+            "translation": "Tren istasyonu nerede?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bahnhof", "Garten", "Stuhl", "Käse"]
+          },
+          {
+            "text": "Ich spreche ein bisschen {{Deutsch}}.",
+            "translation": "Biraz Almanca konuşuyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Deutsch", "Musik", "Wasser", "Sport"]
+          },
+          {
+            "text": "Meine Mutter ist sehr {{nett}}.",
+            "translation": "Annem çok nazik.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["nett", "neu", "leer", "laut"]
+          },
+          {
+            "text": "Wir trinken kaltes {{Wasser}}.",
+            "translation": "Soğuk su içiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Wasser", "Fenster", "Messer", "Zimmer"]
+          },
+          {
+            "text": "Ich sehe einen roten {{Apfel}}.",
+            "translation": "Kırmızı bir elma görüyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Apfel", "Teller", "Schuh", "Stift"]
+          },
+          {
+            "text": "Der Unterricht beginnt um {{neun}}.",
+            "translation": "Ders saat dokuzda başlıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["neun", "neu", "nah", "nur"]
+          },
+          {
+            "text": "Ich schreibe eine kurze {{Nachricht}}.",
+            "translation": "Kısa bir mesaj yazıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Nachricht", "Geschichte", "Adresse", "Nummer"]
+          },
+          {
+            "text": "Das Zimmer ist sehr {{hell}}.",
+            "translation": "Oda çok aydınlık.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["hell", "schnell", "voll", "still"]
+          },
+          {
+            "text": "Meine Schuhe sind {{schwarz}}.",
+            "translation": "Ayakkabılarım siyah.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["schwarz", "weiß", "grün", "gelb"]
+          },
+          {
+            "text": "Ich nehme heute den {{Bus}}.",
+            "translation": "Bugün otobüse biniyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bus", "Brief", "Ball", "Baum"]
+          },
+          {
+            "text": "Wir lernen neue {{Wörter}}.",
+            "translation": "Yeni kelimeler öğreniyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Wörter", "Bilder", "Türen", "Länder"]
+          }
+        ],
+        "a2": [
+          {
+            "text": "Ich bleibe zu Hause, weil ich {{krank}} bin.",
+            "translation": "Hasta olduğum için evde kalıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["krank", "schnell", "billig", "fertig"]
+          },
+          {
+            "text": "Nachdem ich gefrühstückt habe, {{gehe}} ich zur Arbeit.",
+            "translation": "Kahvaltı yaptıktan sonra işe gidiyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gehe", "ging", "gehen", "gehst"]
+          },
+          {
+            "text": "Kannst du das Fenster bitte {{öffnen}}?",
+            "translation": "Lütfen pencereyi açabilir misin?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["öffnen", "schließen", "finden", "tragen"]
+          },
+          {
+            "text": "Ich habe gestern einen Film {{gesehen}}.",
+            "translation": "Dün bir film izledim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gesehen", "gesucht", "gesagt", "gestellt"]
+          },
+          {
+            "text": "Wir möchten im Sommer nach Wien {{reisen}}.",
+            "translation": "Yazın Viyana’ya seyahat etmek istiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["reisen", "reichen", "rufen", "reden"]
+          },
+          {
+            "text": "Der Termin wurde auf Freitag {{verschoben}}.",
+            "translation": "Randevu cumaya ertelendi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["verschoben", "vergessen", "verkauft", "verstanden"]
+          },
+          {
+            "text": "Ich interessiere mich für moderne {{Kunst}}.",
+            "translation": "Modern sanatla ilgileniyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Kunst", "Kunde", "Küche", "Karte"]
+          },
+          {
+            "text": "Er hat mir eine lange Nachricht {{geschickt}}.",
+            "translation": "Bana uzun bir mesaj gönderdi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["geschickt", "geschlafen", "geschnitten", "geschrieben"]
+          },
+          {
+            "text": "Obwohl es regnet, gehen wir {{spazieren}}.",
+            "translation": "Yağmur yağmasına rağmen yürüyüşe çıkıyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["spazieren", "studieren", "sortieren", "probieren"]
+          },
+          {
+            "text": "Ich muss meine Wohnung bis morgen {{aufräumen}}.",
+            "translation": "Yarına kadar dairemi toplamam gerekiyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["aufräumen", "aufstehen", "aufhören", "aufmachen"]
+          },
+          {
+            "text": "Die Reise dauert ungefähr drei {{Stunden}}.",
+            "translation": "Yolculuk yaklaşık üç saat sürüyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Stunden", "Stufen", "Stücke", "Stimmen"]
+          },
+          {
+            "text": "Ich habe vergessen, den Herd {{auszumachen}}.",
+            "translation": "Ocağı kapatmayı unuttum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["auszumachen", "anzumachen", "mitzubringen", "einzukaufen"]
+          },
+          {
+            "text": "Sie bewirbt sich um eine neue {{Stelle}}.",
+            "translation": "Yeni bir pozisyona başvuruyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Stelle", "Straße", "Stimme", "Stunde"]
+          },
+          {
+            "text": "Wir vergleichen die Preise vor dem {{Kauf}}.",
+            "translation": "Satın almadan önce fiyatları karşılaştırıyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Kauf", "Kurs", "Koffer", "Klang"]
+          },
+          {
+            "text": "Ich habe den Schlüssel im Auto {{gelassen}}.",
+            "translation": "Anahtarı arabada bıraktım.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gelassen", "gelesen", "gelaufen", "geladen"]
+          },
+          {
+            "text": "Der Arzt empfiehlt mehr {{Bewegung}}.",
+            "translation": "Doktor daha fazla hareket öneriyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Bewegung", "Bezahlung", "Bedeutung", "Begegnung"]
+          },
+          {
+            "text": "Wir sollten früher mit der Planung {{beginnen}}.",
+            "translation": "Planlamaya daha erken başlamalıyız.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["beginnen", "behalten", "bekommen", "besuchen"]
+          },
+          {
+            "text": "Ich habe mich über die Einladung sehr {{gefreut}}.",
+            "translation": "Davet beni çok mutlu etti.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["gefreut", "gefragt", "gefolgt", "gefeiert"]
+          },
+          {
+            "text": "Die Verkäuferin hat mir die Größe {{empfohlen}}.",
+            "translation": "Satıcı bana bedeni önerdi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["empfohlen", "erfunden", "erzählt", "erklärt"]
+          },
+          {
+            "text": "Wir treffen uns, sobald du {{ankommst}}.",
+            "translation": "Sen varır varmaz buluşacağız.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["ankommst", "anfängst", "aufräumst", "anrufst"]
+          }
+        ]
+      }
+    },
+    {
+      "languagePairSlug": "eng-tr",
+      "groups": [
+        {
+          "name": "Fluency Fast Track",
+          "type": "fast_track",
+          "description": "Akıcı pratik için hızlı başlangıç koleksiyonları.",
+          "order": 1
+        },
+        {
+          "name": "CEFR",
+          "type": "cefr",
+          "description": "CEFR seviyelerine göre düzenlenmiş resmi koleksiyonlar.",
+          "order": 2
+        }
+      ],
+      "collections": [
+        {
+          "groupType": "fast_track",
+          "name": "Fluency Fast Track 1",
+          "slug": "fluency-fast-track-1",
+          "description": "Temel İngilizce cümle kalıplarıyla ilk pratik döngüsü.",
+          "type": "fast_track",
+          "level": "A1",
+          "order": 1,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "fast_track",
+          "name": "Fluency Fast Track 2",
+          "slug": "fluency-fast-track-2",
+          "description": "Biraz daha uzun bağlamlı günlük İngilizce cümleler.",
+          "type": "fast_track",
+          "level": "A1",
+          "order": 2,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "cefr",
+          "name": "A1",
+          "slug": "a1",
+          "description": "Basit İngilizce ifadeler ve sorular için başlangıç CEFR alıştırmaları.",
+          "type": "cefr",
+          "level": "A1",
+          "order": 1,
+          "isOfficial": true,
+          "isPublic": true
+        },
+        {
+          "groupType": "cefr",
+          "name": "A2",
+          "slug": "a2",
+          "description": "Nedenler, planlar ve günlük ayrıntılarla temel CEFR alıştırmaları.",
+          "type": "cefr",
+          "level": "A2",
+          "order": 2,
+          "isOfficial": true,
+          "isPublic": true
+        }
+      ],
+      "sentencesByCollectionSlug": {
+        "fluency-fast-track-1": [
+          {
+            "text": "I {{am}} at home.",
+            "translation": "Ben evdeyim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["are", "am", "is", "be"]
+          },
+          {
+            "text": "You {{have}} time.",
+            "translation": "Senin zamanın var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["has", "have", "had", "having"]
+          },
+          {
+            "text": "We {{go}} shopping today.",
+            "translation": "Bugün alışverişe gidiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["go", "goes", "going", "went"]
+          },
+          {
+            "text": "She {{comes}} from London.",
+            "translation": "O Londra’dan geliyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["come", "comes", "coming", "came"]
+          },
+          {
+            "text": "The weather {{is}} nice.",
+            "translation": "Hava güzel.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["are", "is", "am", "be"]
+          },
+          {
+            "text": "I {{drink}} coffee every morning.",
+            "translation": "Her sabah kahve içerim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["drink", "drinks", "drank", "drinking"]
+          },
+          {
+            "text": "The train {{leaves}} on time.",
+            "translation": "Tren zamanında kalkıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["leave", "leaves", "left", "leaving"]
+          },
+          {
+            "text": "My sister {{learns}} English.",
+            "translation": "Kız kardeşim İngilizce öğreniyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["learn", "learns", "learned", "learning"]
+          },
+          {
+            "text": "We {{live}} in a small apartment.",
+            "translation": "Küçük bir dairede yaşıyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["live", "lives", "lived", "living"]
+          },
+          {
+            "text": "I {{need}} a new notebook.",
+            "translation": "Yeni bir deftere ihtiyacım var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["need", "needs", "needed", "needing"]
+          },
+          {
+            "text": "He {{works}} in an office.",
+            "translation": "O bir ofiste çalışıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["work", "works", "worked", "working"]
+          },
+          {
+            "text": "The children {{play}} in the park.",
+            "translation": "Çocuklar parkta oynuyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["play", "plays", "played", "playing"]
+          },
+          {
+            "text": "I {{find}} the answer.",
+            "translation": "Cevabı buluyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["find", "finds", "found", "finding"]
+          },
+          {
+            "text": "You {{speak}} very clearly.",
+            "translation": "Çok net konuşuyorsun.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["speak", "speaks", "spoke", "speaking"]
+          },
+          {
+            "text": "We {{eat}} at seven.",
+            "translation": "Saat yedide yemek yiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["eat", "eats", "ate", "eating"]
+          },
+          {
+            "text": "She {{reads}} a short book.",
+            "translation": "O kısa bir kitap okuyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["read", "reads", "reading", "reader"]
+          },
+          {
+            "text": "I {{take}} the bus.",
+            "translation": "Otobüse biniyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["take", "takes", "took", "taking"]
+          },
+          {
+            "text": "The dog {{sleeps}} under the table.",
+            "translation": "Köpek masanın altında uyuyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["sleep", "sleeps", "slept", "sleeping"]
+          },
+          {
+            "text": "We {{make}} a plan.",
+            "translation": "Bir plan yapıyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["make", "makes", "made", "making"]
+          },
+          {
+            "text": "I {{understand}} the question.",
+            "translation": "Soruyu anlıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["understand", "understands", "understood", "understanding"]
+          }
+        ],
+        "fluency-fast-track-2": [
+          {
+            "text": "Can you please {{help}} me?",
+            "translation": "Lütfen bana yardım edebilir misin?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["help", "hear", "hold", "hope"]
+          },
+          {
+            "text": "I want to {{wake}} up early tomorrow.",
+            "translation": "Yarın erken uyanmak istiyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["wake", "walk", "wait", "wash"]
+          },
+          {
+            "text": "We need to {{buy}} the tickets online.",
+            "translation": "Biletleri internetten satın almalıyız.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["buy", "bring", "build", "borrow"]
+          },
+          {
+            "text": "She {{visited}} her friend yesterday.",
+            "translation": "Dün arkadaşını ziyaret etti.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["visited", "waited", "wanted", "watched"]
+          },
+          {
+            "text": "I {{forgot}} my bag on the train.",
+            "translation": "Çantamı trende unuttum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["forgot", "found", "followed", "finished"]
+          },
+          {
+            "text": "The waiter will bring the {{bill}} soon.",
+            "translation": "Garson birazdan hesabı getirecek.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bill", "bowl", "bag", "bed"]
+          },
+          {
+            "text": "We are waiting at the {{entrance}}.",
+            "translation": "Girişte bekliyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["entrance", "exit", "office", "station"]
+          },
+          {
+            "text": "I will {{call}} you again later.",
+            "translation": "Seni sonra tekrar arayacağım.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["call", "carry", "clean", "close"]
+          },
+          {
+            "text": "The museum is {{closed}} on Mondays.",
+            "translation": "Müze pazartesileri kapalıdır.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["closed", "cold", "clear", "cheap"]
+          },
+          {
+            "text": "She is wearing a blue {{coat}} today.",
+            "translation": "Bugün mavi bir palto giyiyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["coat", "card", "cup", "clock"]
+          },
+          {
+            "text": "We have enough time for a {{walk}}.",
+            "translation": "Bir yürüyüş için yeterli zamanımız var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["walk", "work", "word", "week"]
+          },
+          {
+            "text": "I still have to {{answer}} my emails.",
+            "translation": "E-postalarımı hâlâ yanıtlamam gerekiyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["answer", "arrive", "ask", "agree"]
+          },
+          {
+            "text": "The supermarket {{opens}} at eight.",
+            "translation": "Süpermarket saat sekizde açılıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["opens", "orders", "offers", "owns"]
+          },
+          {
+            "text": "Can I {{pay}} by card?",
+            "translation": "Kartla ödeyebilir miyim?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["pay", "play", "plan", "pick"]
+          },
+          {
+            "text": "We {{talked}} all evening.",
+            "translation": "Bütün akşam konuştuk.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["talked", "turned", "tested", "traveled"]
+          },
+          {
+            "text": "I am looking for a quiet place to {{study}}.",
+            "translation": "Ders çalışmak için sessiz bir yer arıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["study", "stand", "start", "stay"]
+          },
+          {
+            "text": "The lamp is next to the {{sofa}}.",
+            "translation": "Lamba kanepenin yanında.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["sofa", "sink", "shelf", "stove"]
+          },
+          {
+            "text": "He explains the task very {{patiently}}.",
+            "translation": "Görevi çok sabırlı bir şekilde açıklıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["patiently", "quickly", "loudly", "quietly"]
+          },
+          {
+            "text": "We are meeting in front of the cinema at {{six}}.",
+            "translation": "Saat altıda sinemanın önünde buluşuyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["six", "seven", "eight", "ten"]
+          },
+          {
+            "text": "I am looking forward to the {{weekend}}.",
+            "translation": "Hafta sonunu dört gözle bekliyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["weekend", "window", "wallet", "weather"]
+          }
+        ],
+        "a1": [
+          {
+            "text": "My name {{is}} Ada.",
+            "translation": "Benim adım Ada.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["is", "are", "am", "be"]
+          },
+          {
+            "text": "I come from {{Turkey}}.",
+            "translation": "Ben Türkiye’den geliyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Turkey", "school", "street", "city"]
+          },
+          {
+            "text": "What is your {{name}}?",
+            "translation": "Senin adın ne?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["name", "number", "home", "job"]
+          },
+          {
+            "text": "I live in {{Istanbul}}.",
+            "translation": "İstanbul’da yaşıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Istanbul", "Monday", "English", "coffee"]
+          },
+          {
+            "text": "This is my {{brother}}.",
+            "translation": "Bu benim erkek kardeşim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["brother", "table", "apple", "train"]
+          },
+          {
+            "text": "I have two {{children}}.",
+            "translation": "İki çocuğum var.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["children", "cards", "books", "rooms"]
+          },
+          {
+            "text": "Today is {{Monday}}.",
+            "translation": "Bugün pazartesi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["Monday", "summer", "morning", "evening"]
+          },
+          {
+            "text": "The coffee is very {{hot}}.",
+            "translation": "Kahve çok sıcak.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["hot", "cold", "old", "short"]
+          },
+          {
+            "text": "I buy a loaf of {{bread}}.",
+            "translation": "Bir ekmek alıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bread", "car", "house", "picture"]
+          },
+          {
+            "text": "Where is the train {{station}}?",
+            "translation": "Tren istasyonu nerede?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["station", "garden", "chair", "cheese"]
+          },
+          {
+            "text": "I speak a little {{English}}.",
+            "translation": "Biraz İngilizce konuşuyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["English", "music", "water", "sport"]
+          },
+          {
+            "text": "My mother is very {{kind}}.",
+            "translation": "Annem çok nazik.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["kind", "new", "empty", "loud"]
+          },
+          {
+            "text": "We drink cold {{water}}.",
+            "translation": "Soğuk su içiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["water", "window", "knife", "room"]
+          },
+          {
+            "text": "I see a red {{apple}}.",
+            "translation": "Kırmızı bir elma görüyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["apple", "plate", "shoe", "pen"]
+          },
+          {
+            "text": "The lesson starts at {{nine}}.",
+            "translation": "Ders saat dokuzda başlıyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["nine", "new", "near", "only"]
+          },
+          {
+            "text": "I write a short {{message}}.",
+            "translation": "Kısa bir mesaj yazıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["message", "story", "address", "number"]
+          },
+          {
+            "text": "The room is very {{bright}}.",
+            "translation": "Oda çok aydınlık.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bright", "quick", "full", "still"]
+          },
+          {
+            "text": "My shoes are {{black}}.",
+            "translation": "Ayakkabılarım siyah.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["black", "white", "green", "yellow"]
+          },
+          {
+            "text": "I take the {{bus}} today.",
+            "translation": "Bugün otobüse biniyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["bus", "letter", "ball", "tree"]
+          },
+          {
+            "text": "We learn new {{words}}.",
+            "translation": "Yeni kelimeler öğreniyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["words", "pictures", "doors", "countries"]
+          }
+        ],
+        "a2": [
+          {
+            "text": "I am staying home because I am {{sick}}.",
+            "translation": "Hasta olduğum için evde kalıyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["sick", "fast", "cheap", "ready"]
+          },
+          {
+            "text": "After breakfast, I {{go}} to work.",
+            "translation": "Kahvaltıdan sonra işe gidiyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["go", "went", "gone", "goes"]
+          },
+          {
+            "text": "Can you please {{open}} the window?",
+            "translation": "Lütfen pencereyi açabilir misin?",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["open", "close", "find", "carry"]
+          },
+          {
+            "text": "I {{watched}} a movie yesterday.",
+            "translation": "Dün bir film izledim.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["watched", "searched", "said", "stood"]
+          },
+          {
+            "text": "We would like to {{travel}} to Vienna in summer.",
+            "translation": "Yazın Viyana’ya seyahat etmek istiyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["travel", "reach", "call", "talk"]
+          },
+          {
+            "text": "The appointment was {{moved}} to Friday.",
+            "translation": "Randevu cumaya ertelendi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["moved", "forgotten", "sold", "understood"]
+          },
+          {
+            "text": "I am interested in modern {{art}}.",
+            "translation": "Modern sanatla ilgileniyorum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["art", "customer", "kitchen", "card"]
+          },
+          {
+            "text": "He {{sent}} me a long message.",
+            "translation": "Bana uzun bir mesaj gönderdi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["sent", "slept", "cut", "wrote"]
+          },
+          {
+            "text": "Although it is raining, we are going for a {{walk}}.",
+            "translation": "Yağmur yağmasına rağmen yürüyüşe çıkıyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["walk", "study", "sort", "try"]
+          },
+          {
+            "text": "I have to {{tidy}} my apartment by tomorrow.",
+            "translation": "Yarına kadar dairemi toplamam gerekiyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["tidy", "wake", "stop", "open"]
+          },
+          {
+            "text": "The trip takes about three {{hours}}.",
+            "translation": "Yolculuk yaklaşık üç saat sürüyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["hours", "steps", "pieces", "voices"]
+          },
+          {
+            "text": "I forgot to {{turn}} off the stove.",
+            "translation": "Ocağı kapatmayı unuttum.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["turn", "bring", "shop", "make"]
+          },
+          {
+            "text": "She is applying for a new {{position}}.",
+            "translation": "Yeni bir pozisyona başvuruyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["position", "street", "voice", "hour"]
+          },
+          {
+            "text": "We compare prices before we {{buy}}.",
+            "translation": "Satın almadan önce fiyatları karşılaştırıyoruz.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["buy", "study", "pack", "listen"]
+          },
+          {
+            "text": "I left the key in the {{car}}.",
+            "translation": "Anahtarı arabada bıraktım.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["car", "book", "kitchen", "bag"]
+          },
+          {
+            "text": "The doctor recommends more {{exercise}}.",
+            "translation": "Doktor daha fazla hareket öneriyor.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["exercise", "payment", "meaning", "meeting"]
+          },
+          {
+            "text": "We should {{start}} planning earlier.",
+            "translation": "Planlamaya daha erken başlamalıyız.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["start", "keep", "receive", "visit"]
+          },
+          {
+            "text": "I was very happy about the {{invitation}}.",
+            "translation": "Davet beni çok mutlu etti.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["invitation", "question", "party", "answer"]
+          },
+          {
+            "text": "The saleswoman recommended this {{size}}.",
+            "translation": "Satıcı bu bedeni önerdi.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["size", "story", "price", "color"]
+          },
+          {
+            "text": "We will meet as soon as you {{arrive}}.",
+            "translation": "Sen varır varmaz buluşacağız.",
+            "alternativeAnswers": [],
+            "multipleChoiceOptions": ["arrive", "begin", "clean", "call"]
+          }
+        ]
+      }
+    }
+  ]
+}
