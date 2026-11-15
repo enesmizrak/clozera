@@ -171,10 +171,11 @@ export const updateCollection = Effect.fn('updateCollection')(function* (
   return serializeCollection(collection, viewer)
 })
 
+/** Deletes the collection first: if a later step fails, leftover sentences and pins are unreachable and harmless. */
 export const deleteCollection = Effect.fn('deleteCollection')(function* (id: unknown, viewer: UserDocument) {
   const collection = yield* findOwnedCollection(id, viewer)
-  yield* db(() => CollectionSentence.deleteMany({ collection: collection._id }))
   yield* db(() => Collection.deleteOne({ _id: collection._id }))
+  yield* db(() => CollectionSentence.deleteMany({ collection: collection._id }))
   yield* db(() =>
     User.updateMany({ pinnedCollections: collection._id }, { $pull: { pinnedCollections: collection._id } })
   )

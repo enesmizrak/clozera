@@ -1,5 +1,5 @@
 import type { Express } from 'express'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vite-plus/test'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { Collection } from '../models/collection.ts'
 import { CollectionGroup } from '../models/collection-group.ts'
 import { CollectionSentence } from '../models/collection-sentence.ts'
@@ -464,6 +464,41 @@ describe('collections integration', () => {
     await expect(CollectionSentence.findOne({ collection: collection._id })).resolves.toBeNull()
     const updatedViewer = await User.findById(viewer._id).orFail()
     expect(updatedViewer.pinnedCollections.map(String)).not.toContain(String(collection._id))
+  })
+
+  it('leaves no readable collection when deleting its sentences fails', async () => {
+    const { pair } = await seedCollection()
+    const { agent: ownerAgent, user: owner } = await signUpAs(app, {
+      username: 'owner',
+      email: 'owner@example.com',
+    })
+    const collection = await Collection.create({
+      owner: owner._id,
+      languagePair: pair._id,
+      name: 'Shared Practice',
+      slug: 'shared-practice',
+      isOfficial: false,
+      isPublic: true,
+    })
+    await CollectionSentence.create({
+      owner: owner._id,
+      collection: collection._id,
+      text: 'Ich {{teile}}.',
+      translation: 'I share.',
+      cloze: 'teile',
+    })
+    const spy = vi.spyOn(CollectionSentence, 'deleteMany').mockRejectedValueOnce(new Error('boom'))
+
+    try {
+      const response = await ownerAgent.delete(`/api/collections/${collection._id.toString()}`)
+
+      expect(response.status).toBe(500)
+      await expect(Collection.findById(collection._id)).resolves.toBeNull()
+      const sentences = await ownerAgent.get(`/api/collections/${collection._id.toString()}/sentences`)
+      expect(sentences.status).toBe(404)
+    } finally {
+      spy.mockRestore()
+    }
   })
 
   it('does not allow learner-facing edits to official collections even when the user is admin owner', async () => {
