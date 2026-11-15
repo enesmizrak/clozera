@@ -25,6 +25,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { createLearnerCollection, libraryCollection } from '@/data/collections'
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
 import {
   buildCollectionShelves,
   countShelfCollections,
@@ -85,6 +86,14 @@ function DashboardPage() {
   const setSort = usePreferences(state => state.setCollectionSort)
   const expandedGroupIds = usePreferences(state => state.expandedGroupIds)
   const setExpandedGroupIds = usePreferences(state => state.setExpandedGroupIds)
+  // The input follows the keystrokes; the URL catches up after a pause (or changes from outside, e.g. back).
+  const [draft, setDraft] = useState(query)
+  const [prevQuery, setPrevQuery] = useState(query)
+  const [lastWritten, setLastWritten] = useState(query)
+  if (query !== prevQuery) {
+    setPrevQuery(query)
+    if (query !== lastWritten) setDraft(query)
+  }
   const [creating, setCreating] = useState(false)
   const [practice, setPractice] = useState<CollectionDto | null>(null)
 
@@ -94,15 +103,24 @@ function DashboardPage() {
     query: q => q.from({ collection: library }).where(({ collection }) => eq(collection.isPinned, true)),
   })
 
-  const normalizedQuery = query.trim().toLowerCase()
+  const normalizedQuery = draft.trim().toLowerCase()
   const pinned = pinnedCollections.filter(collection =>
     collection.name.toLowerCase().includes(normalizedQuery)
   )
-  const shelves = filterCollectionShelves(buildCollectionShelves(collections), query)
+  const shelves = filterCollectionShelves(buildCollectionShelves(collections), draft)
   const visibleCount = tab === 'dashboard' ? pinned.length : countShelfCollections(shelves)
 
   const setSearch = (next: Partial<z.infer<typeof dashboardSearchSchema>>) =>
     void navigate({ search: previous => ({ ...previous, ...next }), replace: true })
+  const writeQuery = (value: string) => {
+    setLastWritten(value)
+    setSearch({ q: value || undefined })
+  }
+  const writeQueryDebounced = useDebouncedCallback(writeQuery, 200)
+  const clearSearch = () => {
+    setDraft('')
+    writeQuery('')
+  }
 
   return (
     <>
@@ -155,16 +173,15 @@ function DashboardPage() {
             <InputGroupInput
               aria-label="Search collections"
               placeholder="Search collections…"
-              value={query}
-              onChange={event => setSearch({ q: event.target.value || undefined })}
+              value={draft}
+              onChange={event => {
+                setDraft(event.target.value)
+                writeQueryDebounced(event.target.value)
+              }}
             />
-            {query && (
+            {draft && (
               <InputGroupAddon align="inline-end">
-                <InputGroupButton
-                  size="icon-xs"
-                  aria-label="Clear search"
-                  onClick={() => setSearch({ q: undefined })}
-                >
+                <InputGroupButton size="icon-xs" aria-label="Clear search" onClick={clearSearch}>
                   <X />
                 </InputGroupButton>
               </InputGroupAddon>
@@ -202,9 +219,9 @@ function DashboardPage() {
                 <EmptyMedia variant="icon">
                   <BookOpen />
                 </EmptyMedia>
-                <EmptyTitle>{query ? 'No matches found.' : 'No pinned collections yet.'}</EmptyTitle>
+                <EmptyTitle>{draft ? 'No matches found.' : 'No pinned collections yet.'}</EmptyTitle>
                 <EmptyDescription>
-                  {query
+                  {draft
                     ? 'Try a different collection name.'
                     : 'Add collections to your dashboard from the Collections tab.'}
                 </EmptyDescription>
@@ -212,9 +229,9 @@ function DashboardPage() {
               <EmptyContent>
                 <Button
                   variant="outline"
-                  onClick={() => (query ? setSearch({ q: undefined }) : setSearch({ tab: 'collections' }))}
+                  onClick={() => (draft ? clearSearch() : setSearch({ tab: 'collections' }))}
                 >
-                  {query ? 'Clear search' : 'Explore collections'}
+                  {draft ? 'Clear search' : 'Explore collections'}
                   <ArrowRight />
                 </Button>
               </EmptyContent>
@@ -273,19 +290,16 @@ function DashboardPage() {
               <EmptyMedia variant="icon">
                 <BookOpen />
               </EmptyMedia>
-              <EmptyTitle>{query ? 'No matches found.' : 'No collections yet.'}</EmptyTitle>
+              <EmptyTitle>{draft ? 'No matches found.' : 'No collections yet.'}</EmptyTitle>
               <EmptyDescription>
-                {query
+                {draft
                   ? 'Try a different collection name.'
                   : 'Create the first collection for this language pair.'}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button
-                variant="outline"
-                onClick={() => (query ? setSearch({ q: undefined }) : setCreating(true))}
-              >
-                {query ? 'Clear search' : 'Create a collection'}
+              <Button variant="outline" onClick={() => (draft ? clearSearch() : setCreating(true))}>
+                {draft ? 'Clear search' : 'Create a collection'}
                 <ArrowRight />
               </Button>
             </EmptyContent>

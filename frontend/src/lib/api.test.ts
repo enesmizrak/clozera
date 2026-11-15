@@ -57,3 +57,25 @@ describe('api.collections', () => {
     expect(warn).toHaveBeenCalledWith('Library truncated at 2000 rows')
   })
 })
+
+describe('api path building', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('encodes ids so they cannot escape their path segment', async () => {
+    const fetchMock = vi.fn<(input: string) => Promise<Response>>(
+      async () =>
+        new Response(JSON.stringify({ data: { id: 'x' } }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    await api.collection('../users/me')
+
+    const url = new URL(fetchMock.mock.calls[0]![0], 'http://localhost')
+    expect(url.pathname.endsWith('/collections/..%2Fusers%2Fme')).toBe(true)
+  })
+})

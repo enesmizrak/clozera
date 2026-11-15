@@ -84,6 +84,9 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   return payload
 }
 
+/** Route params are untrusted: encode them so they cannot alter the API path. */
+const segment = (value: string) => encodeURIComponent(value)
+
 const data = async <T>(promise: Promise<ApiData<T>>) => (await promise).data
 
 /** Upper bound on pages loaded per list: 20 pages of 100 rows. */
@@ -129,36 +132,52 @@ export const api = {
   collections: (languagePair: string, signal?: AbortSignal) =>
     allPages<'collections', CollectionDto>('/collections', 'collections', { languagePair }, signal),
   collection: (id: string, signal?: AbortSignal) =>
-    data(apiRequest<ApiData<CollectionDto>>(`/collections/${id}`, { signal })),
+    data(apiRequest<ApiData<CollectionDto>>(`/collections/${segment(id)}`, { signal })),
   createCollection: (body: CollectionCreateInput) =>
     data(apiRequest<ApiData<CollectionDto>>('/collections', { method: 'POST', body })),
   updateCollection: (id: string, body: CollectionUpdateInput) =>
-    data(apiRequest<ApiData<CollectionDto>>(`/collections/${id}`, { method: 'PATCH', body })),
-  deleteCollection: (id: string) => apiRequest<void>(`/collections/${id}`, { method: 'DELETE' }),
+    data(apiRequest<ApiData<CollectionDto>>(`/collections/${segment(id)}`, { method: 'PATCH', body })),
+  deleteCollection: (id: string) => apiRequest<void>(`/collections/${segment(id)}`, { method: 'DELETE' }),
   pinCollection: (collectionId: string) =>
     data(
       apiRequest<ApiData<CollectionDto>>('/dashboard/collections', { method: 'POST', body: { collectionId } })
     ),
   unpinCollection: async (collectionId: string) =>
     (
-      await apiRequest<ApiData<CollectionDto> | undefined>(`/dashboard/collections/${collectionId}`, {
-        method: 'DELETE',
-      })
+      await apiRequest<ApiData<CollectionDto> | undefined>(
+        `/dashboard/collections/${segment(collectionId)}`,
+        {
+          method: 'DELETE',
+        }
+      )
     )?.data ?? null,
 
   sentences: (collectionId: string, signal?: AbortSignal) =>
-    allPages<'sentences', SentenceDto>(`/collections/${collectionId}/sentences`, 'sentences', {}, signal),
+    allPages<'sentences', SentenceDto>(
+      `/collections/${segment(collectionId)}/sentences`,
+      'sentences',
+      {},
+      signal
+    ),
   createSentence: (collectionId: string, body: SentenceInput) =>
     data(
-      apiRequest<ApiData<SentenceDto>>(`/collections/${collectionId}/sentences`, { method: 'POST', body })
-    ),
-  updateSentence: (collectionId: string, sentenceId: string, body: SentenceInput) =>
-    data(
-      apiRequest<ApiData<SentenceDto>>(`/collections/${collectionId}/sentences/${sentenceId}`, {
-        method: 'PATCH',
+      apiRequest<ApiData<SentenceDto>>(`/collections/${segment(collectionId)}/sentences`, {
+        method: 'POST',
         body,
       })
     ),
+  updateSentence: (collectionId: string, sentenceId: string, body: SentenceInput) =>
+    data(
+      apiRequest<ApiData<SentenceDto>>(
+        `/collections/${segment(collectionId)}/sentences/${segment(sentenceId)}`,
+        {
+          method: 'PATCH',
+          body,
+        }
+      )
+    ),
   deleteSentence: (collectionId: string, sentenceId: string) =>
-    apiRequest<void>(`/collections/${collectionId}/sentences/${sentenceId}`, { method: 'DELETE' }),
+    apiRequest<void>(`/collections/${segment(collectionId)}/sentences/${segment(sentenceId)}`, {
+      method: 'DELETE',
+    }),
 }

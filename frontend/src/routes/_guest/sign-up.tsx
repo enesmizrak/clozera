@@ -7,7 +7,7 @@ import { FieldGroup } from '@/components/ui/field'
 import { safeRedirect } from '@/data/session'
 import { authClient, browserTimezone } from '@/lib/auth-client'
 import { authErrorMessage } from '@/lib/auth-errors'
-import { EMAIL_VERIFIED_PATH, authSearchSchema } from './-auth'
+import { authSearchSchema, verificationCallbackURL } from './-auth'
 
 export const Route = createFileRoute('/_guest/sign-up')({
   validateSearch: authSearchSchema,
@@ -31,9 +31,7 @@ function SignUpPage() {
         ...input,
         timezone: browserTimezone(),
         // The emailed link signs the learner in and continues from the verification page.
-        callbackURL: redirect
-          ? `${EMAIL_VERIFIED_PATH}?redirect=${encodeURIComponent(redirect)}`
-          : EMAIL_VERIFIED_PATH,
+        callbackURL: verificationCallbackURL(redirect),
       })
       if (error) {
         setServerError(authErrorMessage(error, 'Unable to create your account.'))

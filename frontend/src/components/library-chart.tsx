@@ -7,25 +7,33 @@ import { useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface Row {
+  id: string
   name: string
   sentences: number
 }
 
 const MAX_ROWS = 8
 
+/** Largest collections first; repeated names get a "(2)" suffix so each bar has its own band. */
+export function chartRows(collections: readonly CollectionDto[]): Row[] {
+  const seen = new Map<string, number>()
+  return collections
+    .map(collection => ({ id: collection.id, name: collection.name, sentences: collection.sentenceCount }))
+    .toSorted((left, right) => right.sentences - left.sentences)
+    .slice(0, MAX_ROWS)
+    .map(row => {
+      const count = (seen.get(row.name) ?? 0) + 1
+      seen.set(row.name, count)
+      return count === 1 ? row : { ...row, name: `${row.name} (${count})` }
+    })
+}
+
 /**
  * Answers "where is most of my practice material?" for pinned collections:
  * named-category magnitudes, so sorted horizontal bars with an accessible table equivalent.
  */
 export function LibraryChart({ collections }: { collections: readonly CollectionDto[] }) {
-  const rows = useMemo<Row[]>(
-    () =>
-      collections
-        .map(collection => ({ name: collection.name, sentences: collection.sentenceCount }))
-        .toSorted((left, right) => right.sentences - left.sentences)
-        .slice(0, MAX_ROWS),
-    [collections]
-  )
+  const rows = useMemo(() => chartRows(collections), [collections])
 
   const definition = useMemo(
     () =>
@@ -68,7 +76,7 @@ export function LibraryChart({ collections }: { collections: readonly Collection
           <caption>Sentences per pinned collection</caption>
           <tbody>
             {rows.map(row => (
-              <tr key={row.name}>
+              <tr key={row.id}>
                 <th scope="row">{row.name}</th>
                 <td>{row.sentences}</td>
               </tr>

@@ -9,10 +9,14 @@ import { Spinner } from '@/components/ui/spinner'
 import { useCooldown } from '@/hooks/use-cooldown'
 import { authClient } from '@/lib/auth-client'
 import { authErrorMessage } from '@/lib/auth-errors'
-import { EMAIL_VERIFIED_PATH } from './-auth'
+import { safeRedirect } from '@/data/session'
+import { verificationCallbackURL } from './-auth'
 
 export const Route = createFileRoute('/_guest/check-email')({
-  validateSearch: z.object({ email: z.string().optional().catch(undefined) }),
+  validateSearch: z.object({
+    email: z.string().optional().catch(undefined),
+    redirect: z.string().optional().catch(undefined),
+  }),
   head: () => ({ meta: [{ title: 'Check your email · Clozera' }] }),
   component: CheckEmailPage,
 })
@@ -20,14 +24,17 @@ export const Route = createFileRoute('/_guest/check-email')({
 const RESEND_COOLDOWN_SECONDS = 60
 
 function CheckEmailPage() {
-  const { email } = Route.useSearch()
+  const { email, redirect } = Route.useSearch()
   const cooldown = useCooldown(RESEND_COOLDOWN_SECONDS)
   const [sending, setSending] = useState(false)
 
   async function resend() {
     if (!email) return
     setSending(true)
-    const { error } = await authClient.sendVerificationEmail({ email, callbackURL: EMAIL_VERIFIED_PATH })
+    const { error } = await authClient.sendVerificationEmail({
+      email,
+      callbackURL: verificationCallbackURL(safeRedirect(redirect)),
+    })
     setSending(false)
     if (error) {
       toast.error(authErrorMessage(error, 'Unable to send the email. Please try again.'))

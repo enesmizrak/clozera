@@ -8,7 +8,7 @@ import { FieldGroup } from '@/components/ui/field'
 import { homePathFor, safeRedirect, sessionQuery } from '@/data/session'
 import { authClient } from '@/lib/auth-client'
 import { authErrorMessage } from '@/lib/auth-errors'
-import { EMAIL_VERIFIED_PATH, authSearchSchema } from './-auth'
+import { authSearchSchema, verificationCallbackURL } from './-auth'
 
 export const Route = createFileRoute('/_guest/login')({
   validateSearch: authSearchSchema,
@@ -28,10 +28,16 @@ function LoginPage() {
     onSubmit: async ({ value }) => {
       setServerError(null)
       const credentials = loginSchema.parse(value)
-      const { error } = await authClient.signIn.email({ ...credentials, callbackURL: EMAIL_VERIFIED_PATH })
+      const { error } = await authClient.signIn.email({
+        ...credentials,
+        callbackURL: verificationCallbackURL(safeRedirect(search.redirect)),
+      })
       if (error?.code === 'EMAIL_NOT_VERIFIED') {
         // Better Auth has just emailed a fresh verification link.
-        await router.navigate({ to: '/check-email', search: { email: credentials.email } })
+        await router.navigate({
+          to: '/check-email',
+          search: { email: credentials.email, redirect: search.redirect },
+        })
         return
       }
       if (error) {

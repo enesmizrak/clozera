@@ -1,6 +1,7 @@
 import type { CollectionDto } from '@clozera/shared'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BookOpen, Layers, LockKeyhole, Pin, PinOff, Play, Rows3, Users } from 'lucide-react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -15,6 +16,7 @@ const relationshipLabels = {
 } as const
 
 export function PinButton({ collection, className }: { collection: CollectionDto; className?: string }) {
+  const [pending, setPending] = useState(false)
   if (!collection.capabilities.canPin && !collection.capabilities.canUnpin) return null
   const label = collection.isPinned ? 'Remove from dashboard' : 'Add to dashboard'
   return (
@@ -25,10 +27,13 @@ export function PinButton({ collection, className }: { collection: CollectionDto
       aria-label={`${label}: ${collection.name}`}
       title={label}
       aria-pressed={collection.isPinned}
+      disabled={pending}
       onClick={() => {
-        togglePinned(collection).catch((error: unknown) =>
-          toast.error(errorMessage(error, 'Unable to update your dashboard.'))
-        )
+        if (pending) return
+        setPending(true)
+        togglePinned(collection)
+          .catch((error: unknown) => toast.error(errorMessage(error, 'Unable to update your dashboard.')))
+          .finally(() => setPending(false))
       }}
     >
       {collection.isPinned ? <PinOff /> : <Pin />}
