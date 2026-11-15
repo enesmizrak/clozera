@@ -25,7 +25,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { createLearnerCollection, libraryCollection } from '@/data/collections'
-import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
+import { useSearchDraft } from '@/hooks/use-search-draft'
 import {
   buildCollectionShelves,
   countShelfCollections,
@@ -82,18 +82,18 @@ function DashboardPage() {
   const tab = search.tab ?? 'dashboard'
   const query = search.q ?? ''
   const navigate = useNavigate({ from: Route.fullPath })
+  const setSearch = (next: Partial<z.infer<typeof dashboardSearchSchema>>) =>
+    void navigate({ search: previous => ({ ...previous, ...next }), replace: true })
+  // The input follows the keystrokes; the URL catches up after a pause (or changes from outside, e.g. back).
+  const {
+    draft,
+    onType,
+    clear: clearSearch,
+  } = useSearchDraft(query, value => setSearch({ q: value || undefined }))
   const sort = usePreferences(state => state.collectionSort)
   const setSort = usePreferences(state => state.setCollectionSort)
   const expandedGroupIds = usePreferences(state => state.expandedGroupIds)
   const setExpandedGroupIds = usePreferences(state => state.setExpandedGroupIds)
-  // The input follows the keystrokes; the URL catches up after a pause (or changes from outside, e.g. back).
-  const [draft, setDraft] = useState(query)
-  const [prevQuery, setPrevQuery] = useState(query)
-  const [lastWritten, setLastWritten] = useState(query)
-  if (query !== prevQuery) {
-    setPrevQuery(query)
-    if (query !== lastWritten) setDraft(query)
-  }
   const [creating, setCreating] = useState(false)
   const [practice, setPractice] = useState<CollectionDto | null>(null)
 
@@ -109,19 +109,6 @@ function DashboardPage() {
   )
   const shelves = filterCollectionShelves(buildCollectionShelves(collections), draft)
   const visibleCount = tab === 'dashboard' ? pinned.length : countShelfCollections(shelves)
-
-  const setSearch = (next: Partial<z.infer<typeof dashboardSearchSchema>>) =>
-    void navigate({ search: previous => ({ ...previous, ...next }), replace: true })
-  const writeQuery = (value: string) => {
-    setLastWritten(value)
-    setSearch({ q: value || undefined })
-  }
-  const debouncedWrite = useDebouncedCallback(writeQuery, 200)
-  const clearSearch = () => {
-    debouncedWrite.cancel()
-    setDraft('')
-    writeQuery('')
-  }
 
   return (
     <>
@@ -175,10 +162,7 @@ function DashboardPage() {
               aria-label="Search collections"
               placeholder="Search collections…"
               value={draft}
-              onChange={event => {
-                setDraft(event.target.value)
-                debouncedWrite.run(event.target.value)
-              }}
+              onChange={event => onType(event.target.value)}
             />
             {draft && (
               <InputGroupAddon align="inline-end">
