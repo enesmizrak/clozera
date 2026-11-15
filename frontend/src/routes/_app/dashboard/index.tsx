@@ -116,8 +116,9 @@ function DashboardPage() {
     setLastWritten(value)
     setSearch({ q: value || undefined })
   }
-  const writeQueryDebounced = useDebouncedCallback(writeQuery, 200)
+  const debouncedWrite = useDebouncedCallback(writeQuery, 200)
   const clearSearch = () => {
+    debouncedWrite.cancel()
     setDraft('')
     writeQuery('')
   }
@@ -176,7 +177,7 @@ function DashboardPage() {
               value={draft}
               onChange={event => {
                 setDraft(event.target.value)
-                writeQueryDebounced(event.target.value)
+                debouncedWrite.run(event.target.value)
               }}
             />
             {draft && (
