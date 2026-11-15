@@ -3,11 +3,16 @@ import { cn } from '@/lib/utils'
 
 const components = {
   a({ children, ...props }) {
+    if (props.href?.startsWith('#')) return <a {...props}>{children}</a>
     return (
       <a {...props} rel="nofollow noopener noreferrer" target="_blank">
         {children}
       </a>
     )
+  },
+  // Learner Markdown cannot load remote images: they would reveal readers' IP addresses to third parties.
+  img({ alt }) {
+    return alt ? <span>{alt}</span> : null
   },
 } satisfies MarkdownComponents
 
