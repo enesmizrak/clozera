@@ -1,0 +1,9 @@
+# Remember Practice Results per Sentence on the Server
+
+Status: Proposed
+
+Practice already grades every answer, but the results are discarded when the round ends, and `sessionSentencesFromCollection` draws sentences with a uniform shuffle. `CONTEXT.md` currently defines **Practice Session** as practice without saving learning progress or review history, so remembering results needs a new term and an explicit decision. The proposed term is **Sentence Progress**: a learner's private per-sentence counters (attempts, correct, latest result, last practiced time) used only to choose which sentences a later Practice Session shows more often.
+
+We propose a separate `SentenceProgress` collection keyed by (user, sentence), not fields on the user document. ADR 0002 keeps pins on the user for MVP but names data with its own metadata as the case for a separate model, and per-sentence counters grow without bound. The client sends one batched request at the end of a round (and on leaving mid-round), the API upserts with `$inc`, and a round id makes retries idempotent. Progress is never returned by the sentence list endpoint, so the existing "without progress data" contract holds, and it is never shown to collection creators.
+
+Alternatives considered: do nothing (keeps the glossary true, but leaves learners practicing mastered sentences), and device-local progress in the Zustand preferences store (no backend, but that store is documented as per-device UI preferences, and the data is lost on clearing the browser or switching device). The sampling formula, privacy details and open questions are in `docs/design/sentence-progress.md`. No account-deletion flow exists yet; when one is added it must delete these rows. Accepting this ADR also means adding the term to `CONTEXT.md` and amending **Practice Session**.
