@@ -160,6 +160,45 @@ describe('collections integration', () => {
     })
   })
 
+  it('orders the library by group then order across pages', async () => {
+    const { pair, group: groupA } = await seedCollection()
+    const groupB = await CollectionGroup.create({
+      languagePair: pair._id,
+      name: 'Community',
+      type: 'community',
+      order: 2,
+    })
+    const make = (group: typeof groupA, name: string, order: number) =>
+      Collection.create({
+        languagePair: pair._id,
+        group: group._id,
+        name,
+        slug: name.toLowerCase(),
+        type: 'fast_track',
+        level: 'A1',
+        order,
+      })
+    // Created interleaved so database order differs from group order.
+    await make(groupB, 'B1', 1)
+    await make(groupA, 'A5', 5)
+    await make(groupB, 'B2', 2)
+    await make(groupA, 'A6', 6)
+    await make(groupB, 'B3', 3)
+    const { agent } = await signUpAs(app, { username: 'ada', email: 'ada@example.com' })
+
+    const names: string[] = []
+    for (const page of [1, 2, 3]) {
+      const response = await agent
+        .get('/api/collections')
+        .query({ languagePair: 'deu-eng', perPage: 2, page })
+      expect(response.status).toBe(200)
+      expect(response.body.meta.total).toBe(6)
+      names.push(...response.body.data.collections.map((row: { name: string }) => row.name))
+    }
+
+    expect(names).toEqual(['Fast Track Level 1', 'A5', 'A6', 'B1', 'B2', 'B3'])
+  })
+
   it('lists only owned collections when owner is me', async () => {
     const { pair } = await seedCollection()
     const { agent, user } = await signUpAs(app, {

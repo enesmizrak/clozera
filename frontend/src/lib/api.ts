@@ -86,22 +86,35 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 
 const data = async <T>(promise: Promise<ApiData<T>>) => (await promise).data
 
-/** Loads every page of a paginated list endpoint. The API caps pages at 100 rows. */
+/** Upper bound on pages loaded per list: 20 pages of 100 rows. */
+const MAX_PAGES = 20
+const PAGE_SIZE = 100
+
+/**
+ * Loads every page of a paginated list endpoint. The API caps pages at 100 rows. Page 1 reveals the
+ * total, then the remaining pages load in parallel, capped at `MAX_PAGES`.
+ */
 async function allPages<K extends string, T>(
   path: string,
   key: K,
   query: Query,
   signal?: AbortSignal
 ): Promise<T[]> {
-  const rows: T[] = []
-  for (let page = 1; ; page += 1) {
-    const response = await apiRequest<{ data: Record<K, T[]>; meta: PageMeta }>(path, {
-      query: { ...query, page, perPage: 100 },
+  const fetchPage = (page: number) =>
+    apiRequest<{ data: Record<K, T[]>; meta: PageMeta }>(path, {
+      query: { ...query, page, perPage: PAGE_SIZE },
       signal,
     })
-    rows.push(...response.data[key])
-    if (response.data[key].length === 0 || rows.length >= response.meta.total) return rows
-  }
+
+  const first = await fetchPage(1)
+  const pages = Math.ceil(first.meta.total / PAGE_SIZE)
+  const lastPage = Math.min(pages, MAX_PAGES)
+  if (pages > MAX_PAGES) console.warn(`Library truncated at ${MAX_PAGES * PAGE_SIZE} rows`)
+
+  const rest = await Promise.all(
+    Array.from({ length: Math.max(lastPage - 1, 0) }, (_, i) => fetchPage(i + 2))
+  )
+  return [first, ...rest].flatMap(response => response.data[key])
 }
 
 export const api = {

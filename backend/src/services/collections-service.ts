@@ -19,17 +19,16 @@ import { slugify } from '../lib/slug.ts'
 import { serializeCollection, serializeSentence } from '../lib/serializers.ts'
 import { Collection, type CollectionDocument } from '../models/collection.ts'
 import { CollectionSentence } from '../models/collection-sentence.ts'
-import type { CollectionGroupFields } from '../models/collection-group.ts'
+import { CollectionGroup } from '../models/collection-group.ts'
 import { User, type UserDocument } from '../models/user.ts'
 
-const POPULATED_PATHS = ['languagePair', 'group', 'owner']
+const POPULATED_PATHS = [
+  { path: 'languagePair', select: 'slug name' },
+  { path: 'group', select: 'name type description order' },
+  { path: 'owner', select: 'name username' },
+]
 
 const collectionId = (id: unknown) => objectId(id, collectionNotFound)
-
-function groupOrder(collection: CollectionDocument): number {
-  const group = collection.group as unknown as CollectionGroupFields | null
-  return group?.order ?? Number.MAX_SAFE_INTEGER
-}
 
 function findAccessibleCollection(id: Types.ObjectId, viewer: UserDocument) {
   return db(() =>
@@ -81,26 +80,42 @@ export const listCollections = Effect.fn('listCollections')(function* (input: {
   if (input.owner === 'me') filters.owner = input.viewer._id
   else filters.$or = collectionAccessConditions(input.viewer)
 
-  const [total, collections] = yield* Effect.all(
+  const [total, pageIds] = yield* Effect.all(
     [
       db(() => Collection.countDocuments(filters)),
       db(() =>
-        Collection.find(filters)
-          .populate(POPULATED_PATHS)
-          .sort({ order: 1, _id: 1 })
-          .skip((input.page - 1) * input.perPage)
-          .limit(input.perPage)
+        Collection.aggregate<{ _id: Types.ObjectId }>([
+          { $match: filters },
+          {
+            $lookup: {
+              from: CollectionGroup.collection.name,
+              localField: 'group',
+              foreignField: '_id',
+              as: 'groupDoc',
+              pipeline: [{ $project: { order: 1 } }],
+            },
+          },
+          {
+            $addFields: { groupOrder: { $ifNull: [{ $first: '$groupDoc.order' }, Number.MAX_SAFE_INTEGER] } },
+          },
+          { $sort: { groupOrder: 1, order: 1, _id: 1 } },
+          { $skip: (input.page - 1) * input.perPage },
+          { $limit: input.perPage },
+          { $project: { _id: 1 } },
+        ])
       ),
     ],
     { concurrency: 'unbounded' }
   )
 
-  const sorted = collections.toSorted(
-    (left, right) => groupOrder(left) - groupOrder(right) || (left.order ?? 0) - (right.order ?? 0)
+  const docs = yield* db(() =>
+    Collection.find({ _id: { $in: pageIds.map(row => row._id) } }).populate(POPULATED_PATHS)
   )
+  const byId = new Map(docs.map(doc => [String(doc._id), doc]))
+  const ordered = pageIds.map(row => byId.get(String(row._id))).filter(doc => doc !== undefined)
 
   return {
-    collections: sorted.map(collection => serializeCollection(collection, input.viewer)),
+    collections: ordered.map(collection => serializeCollection(collection, input.viewer)),
     meta: { total, page: input.page, perPage: input.perPage } satisfies PageMeta,
   }
 })
