@@ -55,7 +55,7 @@ async function upsertSentences(pair: LanguagePairDocument, seed: SeedCollectionP
       const normalized = normalizeSentencePayload(sentence)
       if (!normalized.cloze) throw new Error(`Sentence ${index} in ${slug} has no {{cloze}} marker.`)
       await CollectionSentence.findOneAndUpdate(
-        { collection: collection._id, text: sentence.text },
+        { collection: collection._id, text: normalized.text },
         { ...normalized, collection: collection._id, owner: owner._id, order: sentence.order ?? index },
         upsert
       )
@@ -71,9 +71,9 @@ async function upsertSentences(pair: LanguagePairDocument, seed: SeedCollectionP
   return totalSentences
 }
 
-const run = <A>(program: Effect.Effect<A, { message: string }>) =>
-  Effect.runPromise(program).catch((error: { message: string }) => {
-    throw new Error(error.message)
+const run = <A>(program: Effect.Effect<A, { message?: string; _tag?: string }>) =>
+  Effect.runPromise(program).catch((error: { message?: string; _tag?: string }) => {
+    throw new Error(error.message || error._tag || 'Seed step failed.')
   })
 
 runScript(async () => {
