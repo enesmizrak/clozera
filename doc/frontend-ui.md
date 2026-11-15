@@ -1,135 +1,131 @@
-# Frontend UI ve pratik tasarım standartları
+# Frontend UI and practice design standards
 
-## Ortak tasarım kaynağı
+## Shared design source
 
-- Renk, radius ve yazı tipi tokenları: `frontend/src/styles.css`. Yazı tipleri
-  `@fontsource-variable` paketlerinden yerel olarak yüklenir; üçüncü taraf font isteği yapılmaz.
-- `primary`: ana aksiyon ve seçili kontrol. `success`: doğru cevap veya olumlu
-  öz değerlendirme. `destructive`: yanlış cevap, hata ve silme işlemi.
-- Sayfa yerleşimi: `page-shell`; pratik ekranında `data-width="practice"` ile
-  daha dar okuma alanı. Koleksiyon listelerinde `collection-grid` kullanılır.
-- Mod seçimi: shadcn `Label` ve `RadioGroupItem` üzerine `selection-card` uygulanır.
-  Görünüm `data-selected` ve `data-disabled` durumlarından türetilir.
-- Kontroller `frontend/src/components/ui` içindeki resmi shadcn kaynaklarından
-  gelir (Base UI, `base-vega` stili). Yeni bir kontrol gerektiğinde mevcut
-  `components.json` ile resmi CLI üzerinden eklenir. Uygulamaya özgü ortak akışlar,
-  bu kontrolleri birleştirir. Base UI'da `asChild` yerine `render` kullanılır;
-  bağlantıları buton gibi göstermek için `buttonVariants()` sınıfları kullanılır.
-- `@shadcn/lint` kuralları (Oxlint içinde) ham Tailwind renklerini, bilinmeyen
-  sınıfları ve dinamik sınıf dizelerini reddeder; keyfi değerler uyarı verir.
-- Formlar TanStack Form + shadcn `Field` bileşenleriyle kurulur
-  (`src/components/form.tsx`); doğrulama `@clozera/shared` içindeki Zod şemalarını
-  kullanır, böylece API ile aynı kurallar uygulanır.
+- Color, radius and font tokens: `frontend/src/styles.css`. Fonts load locally from the
+  `@fontsource-variable` packages; no third-party font requests are made.
+- `primary`: the main action and the selected control. `success`: a correct answer or a
+  positive self-assessment. `destructive`: a wrong answer, an error or a delete action.
+- Page layout: `page-shell`; the practice screen uses `data-width="practice"` for a narrower
+  reading column. Collection lists use `collection-grid`.
+- Mode selection: `selection-card` is applied on top of shadcn `Label` and `RadioGroupItem`.
+  Its appearance derives from the `data-selected` and `data-disabled` states.
+- Controls come from the official shadcn sources in `frontend/src/components/ui` (Base UI,
+  `base-vega` style). When a new control is needed, add it through the official CLI with the
+  existing `components.json`. App-specific shared flows compose these controls. Base UI uses
+  `render` instead of `asChild`; use the `buttonVariants()` classes to style links as buttons.
+- The `@shadcn/lint` rules (inside Oxlint) reject raw Tailwind colors, unknown classes and
+  dynamic class strings; arbitrary values produce warnings.
+- Forms are built with TanStack Form and shadcn `Field` components (`src/components/form.tsx`);
+  validation uses the Zod schemas in `@clozera/shared`, so the same rules apply as in the API.
 
-## Koleksiyon kartları
+## Collection cards
 
-Kartlarda sırasıyla koleksiyon türü/seviyesi, başlık, açıklama, cümle sayısı ve
-aksiyonlar gösterilir. Başlık ve ok butonu cümle listesine gider; metinli
-`Practice` butonu pratik ayarlarını açar. Sabitleme ayrı, erişilebilir adı olan
-bir aksiyondur. Boş koleksiyonlarda pratik kapalı, cümle listesi erişilebilir kalır.
+Cards show, in order: collection type/level, title, description, sentence count and actions.
+The title and the arrow button open the sentence list; the labelled `Practice` button opens
+the practice settings. Pinning is a separate action with its own accessible name. Practice is
+disabled for empty collections, while the sentence list stays reachable.
 
-Henüz backend'de tutulmayan öğrenme yüzdeleri, mastery veya geçmiş istatistikleri
-kartlarda gösterilmez. Arama alanı görünür kalır; sıralama ad veya cümle sayısına
-uygulanır. Mobilde kartlar ve cevap alanları tek sütuna geçer.
+Learning percentages, mastery or history statistics that the backend doesn't store yet are not
+shown on cards. The search field stays visible; sorting applies to name or sentence count. On
+mobile, cards and answer fields collapse to a single column.
 
-Sekme ve arama metni URL'de tutulur (`/dashboard?tab=collections&q=...`); geri
-gidildiğinde aynı görünüm ve kaydırma konumu geri gelir. Sıralama, açık resmi grup
-başlıkları ve son seçilen pratik modu/oturum uzunluğu cihazda (Zustand `persist`)
-saklanır. Dashboard'daki "Practice material" grafiği (TanStack Charts) sabitlenmiş
-koleksiyonların cümle sayılarını sıralı yatay çubuklarla ve ekran okuyucu için
-tablo eşdeğeriyle gösterir.
+The tab and the search text live in the URL (`/dashboard?tab=collections&q=...`); going back
+restores the same view and scroll position. Sorting, the expanded official group headings and
+the last chosen practice mode and session length are stored on the device (Zustand
+`persist`). The "Practice material" chart on the dashboard (TanStack Charts) shows the sentence
+counts of pinned collections as sorted horizontal bars, with an equivalent table for screen
+readers.
 
-Koleksiyon açıklamaları ve cümle notları Markdown olarak (TanStack Markdown)
-gösterilir; topluluk içerikleri başka öğrenicilerden geldiği için ham HTML kapalıdır.
-Cümle listesi TanStack Table ile aranır ve sayfalanır (25 satır).
+Collection descriptions and sentence notes render as Markdown (TanStack Markdown); raw HTML is
+disabled because community content comes from other learners. The sentence list is searched
+and paginated with TanStack Table (25 rows).
 
-Klavye kısayolları TanStack Hotkeys ile tanımlanır. Çoktan seçmeli soruda 1–4 tuşları
-ilgili şıkkı seçer; odak bir metin alanındayken ya da diyalog/menü açıkken çalışmaz,
-basılı tutulan tuş tek cevap verir (`src/hooks/use-choice-hotkeys.ts`).
+Keyboard shortcuts are defined with TanStack Hotkeys. In a multiple-choice question, keys 1–4
+select the matching option; they do nothing while focus is in a text field or a dialog/menu is
+open, and a held key answers once (`src/hooks/use-choice-hotkeys.ts`).
 
-## Pratik mimarisi
+## Practice architecture
 
-- `src/lib/practice-session.ts`: framework bağımsız cevap kontrolü, karıştırma,
-  mod doğrulama ve oturum uzunluğu seçenekleri.
-- `src/lib/practice-options.ts`: mod ve pratik türlerinin ortak adları,
-  açıklamaları, ikonları, yönergeleri ve kullanılabilirlik durumu.
-- `src/hooks/use-practice-session.ts`: soru ilerletme, cevap açma, değerlendirme
-  ve yeniden başlatma davranışı (`useReducer`). Cümleler route loader'ında TanStack
-  DB koleksiyonuna önceden yüklenir.
-- `src/components/practice-dialog.tsx`: seçenekleri shadcn radio/select kontrolleriyle sunar.
-- `src/routes/_app/dashboard/collections/$collectionId/practice.tsx`: aynı oturum
-  davranışını seçilen cevap moduna göre sunar.
+- `src/lib/practice-session.ts`: framework-independent answer checking, shuffling, mode
+  validation and session length options.
+- `src/lib/practice-options.ts`: shared names, descriptions, icons, instructions and
+  availability of the modes and practice types.
+- `src/hooks/use-practice-session.ts`: advancing questions, revealing answers, grading and
+  restarting (`useReducer`). Sentences are preloaded into a TanStack DB collection in the route
+  loader.
+- `src/components/practice-dialog.tsx`: presents the options with shadcn radio/select controls.
+- `src/routes/_app/dashboard/collections/$collectionId/practice.tsx`: runs the same session
+  behavior for the chosen answer mode.
 
-Desteklenen modlar:
+Supported modes:
 
-| URL `mode` değeri | Kullanıcı davranışı | Oturum sonucu |
+| URL `mode` value | Learner action | Session result |
 | --- | --- | --- |
-| `choice` | Mevcut seçeneklerden cevabı seçer. | Doğru / yanlış |
-| `typed` | Cevabı yazar; alternatif doğru cevaplar kabul edilir. | Doğru / yanlış |
-| `flashcard` | Cevabı açar, ardından hatırlayıp hatırlamadığını değerlendirir. | Hatırlanan / tekrar çalışılacak |
+| `choice` | Picks the answer from the available options. | Correct / wrong |
+| `typed` | Types the answer; alternative correct answers are accepted. | Correct / wrong |
+| `flashcard` | Reveals the answer, then rates whether they remembered it. | Remembered / study again |
 
-`limit` parametresi 5, 10 veya 20 olabilir; geçersiz veya eksik değer 10 kabul
-edilir. Koleksiyonda daha az cümle varsa tamamı kullanılır. Her yeniden başlatmada
-rastgele bir set seçilir. Flashcard öz değerlendirmesi otomatik doğruluk ölçümü
-olarak sunulmaz. Sonuçlar yalnızca mevcut oturumda tutulur; backend'e yazılmaz.
+The `limit` parameter can be 5, 10 or 20; an invalid or missing value counts as 10. If the
+collection has fewer sentences, all of them are used. Each restart picks a new random set.
+The flashcard self-assessment is not presented as an automatic accuracy measure. Results are
+kept only for the current session; nothing is written to the backend.
 
-## Dinleme için hazırlık
+## Preparing for listening
 
-Pratik türü, cevap modundan ayrıdır: `reading` (Vocabulary) cümlenin okunmasını,
-gelecekteki `listening` ise sesle sunulmasını ifade eder. Böylece dinleme daha
-sonra çoktan seçmeli veya yazarak cevapla birleştirilebilir.
+The practice type is separate from the answer mode: `reading` (Vocabulary) means the sentence
+is read, and a future `listening` means it is presented as audio. Listening can then later be
+combined with multiple-choice or typed answers.
 
-Şimdilik yalnızca `reading` kullanılabilir. `listening`, ortak seçenek tanımında
-`available: false` olarak yer alır ve arayüzde gelecek özellik olarak gösterilir.
-Ses çalma, tarayıcı TTS, mikrofon erişimi veya yeni backend endpoint'i eklenmemiştir.
+For now only `reading` is available. `listening` appears in the shared option definition as
+`available: false` and is shown in the UI as an upcoming feature. No audio playback, browser
+TTS, microphone access or new backend endpoint has been added.
 
-Dinleme etkinleştirilmeden önce cümlelerin ses kaynağı, oynatma/hata durumları,
-tekrar dinleme davranışı ve metnin ne zaman gösterileceği tasarlanmalıdır.
-Sadece kullanılabilirlik bayrağını değiştirmek özelliği tamamlamaz.
+Before listening is enabled, design the sentence audio source, the playback and error states,
+the replay behavior, and when the text is revealed. Flipping the availability flag alone does
+not complete the feature.
 
-## Erişilebilirlik ve doğrulama
+## Accessibility and verification
 
-- İkon butonlarında açıklayıcı ad; formlarda bağlı label; seçimlerde gerçek
-  shadcn radio/select kontrolleri kullanılır.
-- Cevap geri bildirimi renk yanında metin ve ikon içerir. Değerlendirmeden sonra
-  odak sonraki aksiyona taşınır. Flashcard cevabı açılmadan öz değerlendirme yapılamaz.
-- Çoktan seçmeli cevaplarda 1–4 tuşları, sayfa açıldığında veya sonraki soruya
-  geçildiğinde ayrıca bir cevap butonuna odaklanmadan kullanılabilir. Dinleyici
-  yalnızca aktif soruyu değerlendirir; metin alanları, açık menü/dialoglar, IME,
-  basılı tutulan tuş tekrarları ve Ctrl/Alt/Meta kısayolları engellenmez.
-- Kontrol komutları: `npm test -w frontend`, `npm run build -w frontend`,
+- Icon buttons have descriptive names, form fields have associated labels, and selections use
+  real shadcn radio/select controls.
+- Answer feedback includes text and an icon besides color. After grading, focus moves to the
+  next action. A flashcard can't be self-assessed before its answer is revealed.
+- In multiple-choice answers, keys 1–4 work when the page opens or the next question appears,
+  without first focusing an answer button. The listener only grades the active question; it
+  does not interfere with text fields, open menus/dialogs, IME, held-key repeats or
+  Ctrl/Alt/Meta shortcuts.
+- Check commands: `npm test -w frontend`, `npm run build -w frontend`,
   `npm run check -w frontend`, `npm run typecheck -w frontend`.
 
+## In-sentence answer field
 
-## Cümle içi cevap alanı
+For typed answers, a shadcn `Input` appears in place of the missing word and is linked to the
+single action button below through the HTML `form` attribute. The input width follows what the
+learner has typed, not the length of the correct answer, so the answer length is not revealed
+in advance. Very long input scrolls inside the field.
 
-Yazılı cevapta shadcn `Input`, eksik kelimenin yerinde gösterilir ve HTML `form`
-özelliğiyle alttaki tek aksiyon butonuna bağlanır. Input genişliği doğru cevabın
-uzunluğundan değil, kullanıcının yazdığı metinden türetilir. Böylece cevap
-uzunluğu önceden açığa çıkmaz. Çok uzun girişler alanın içinde kaydırılır.
+The `cloze-input`, `cloze-blank` and `cloze-answer` styles share the same text alignment and
+compact look. An unanswered blank is one continuous line; underscore characters are not used.
+After checking, the result is shown in the sentence with color and a short text with an icon.
+For a wrong answer, the correct word takes its place in the sentence and the learner's answer
+is kept on a short line. No separate result card is created.
 
-`cloze-input`, `cloze-blank` ve `cloze-answer` stilleri aynı metin hizasını ve
-kompakt görünümü kullanır. Yazılmayan boşluk tek kesintisiz çizgidir; alt çizgi
-karakterleri kullanılmaz. Kontrol sonrasında sonuç cümlede renk ve kısa ikonlu
-metinle gösterilir. Yanlış cevapta doğru kelime cümleye yerleşir; kullanıcının
-cevabı kısa bir satırda korunur. Ayrı bir sonuç kartı oluşturulmaz.
+The same button reads `Check answer` first, then `Next sentence` or `Finish session`. Enter
+triggers both steps; during IME composition Enter doesn't submit the answer. On a new question,
+focus moves back to the answer field in the sentence.
 
-Aynı buton önce `Check answer`, sonra `Next sentence` veya `Finish session`
-olur. Enter bu iki adımı da çalıştırır; IME kompozisyonu sırasında Enter cevabı
-göndermez. Yeni soruda odak yeniden cümledeki cevap alanına geçer.
+## Brand assets
 
+The navbar uses `public/brand/clozera-wordmark.png`, an optimized transparent PNG copy of the
+chosen light-background logo, used with the app's current light theme. The link carries an
+accessible name, and the image has explicit dimensions.
 
-## Marka görselleri
+The root route (`src/routes/__root.tsx`) picks separate favicon PNG files for light and dark
+browser themes with a `prefers-color-scheme` media query. The default ICO version and the root
+`favicon.ico`/`favicon.png` files are kept for older clients. The browser tab theme is
+independent of the app's interface theme; even when the system is in dark mode, the white
+wordmark is not loaded into the current light navbar.
 
-Navbar'da `public/brand/clozera-wordmark.png` kullanılır. Bu dosya, seçilmiş açık
-zemin logosunun optimize edilmiş şeffaf PNG kopyasıdır; mevcut açık arayüz teması
-ile kullanılır. Link erişilebilir bir ad taşır ve görüntü için boyutlar tanımlıdır.
-
-Kök route (`src/routes/__root.tsx`), açık ve koyu tarayıcı temaları için ayrı favicon PNG dosyalarını
-`prefers-color-scheme` media sorgusuyla seçer. ICO varsayılan sürümü ve kökteki
-`favicon.ico`/`favicon.png` dosyaları eski istemciler için korunur. Tarayıcı
-sekmesinin teması, uygulamanın arayüz temasından bağımsızdır; sistem koyu modda
-olsa da mevcut açık navbar'a beyaz wordmark yüklenmez.
-
-Seçilen tasarım dosyaları ve koyu wordmark'ın mevcut sınırı için
-`design/brand/wordmark-v1/README.md` dosyasına bak.
+For the chosen design files and the current limitation of the dark wordmark, see
+`design/brand/wordmark-v1/README.md`.
