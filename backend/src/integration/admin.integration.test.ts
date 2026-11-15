@@ -1,6 +1,7 @@
 import type { Express } from 'express'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vite-plus/test'
 import { Collection } from '../models/collection.ts'
+import { CollectionGroup } from '../models/collection-group.ts'
 import { CollectionSentence } from '../models/collection-sentence.ts'
 import { Language } from '../models/language.ts'
 import { LanguagePair } from '../models/language-pair.ts'
@@ -216,6 +217,67 @@ describe('admin integration', () => {
     }).orFail()
     expect(String(importedSentence.owner)).toBe(String(user._id))
     expect(importedSentence.cloze).toBe('weiss')
+  })
+
+  it('re-running a collections import updates instead of duplicating', async () => {
+    const { agent } = await signUpAs(app, {
+      username: 'admin',
+      email: 'admin@example.com',
+      role: 'admin',
+    })
+    const languages = {
+      languages: [
+        { code: 'de', iso3: 'deu', name: 'German', nativeName: 'Deutsch', flagIso: 'de' },
+        { code: 'en', iso3: 'eng', name: 'English', nativeName: 'English', flagIso: 'gb' },
+      ],
+    }
+    const languagePairs = {
+      languagePairs: [
+        {
+          slug: 'deu-eng',
+          targetLanguageIso3: 'deu',
+          baseLanguageIso3: 'eng',
+          name: 'German from English',
+        },
+      ],
+    }
+    const collections = (name: string) => ({
+      languagePairSlug: 'deu-eng',
+      groups: [{ name: 'Fluency Fast Track', type: 'fast_track', order: 1 }],
+      collections: [
+        {
+          groupType: 'fast_track',
+          name,
+          slug: 'fast-track-level-1',
+          type: 'fast_track',
+          level: 'A1',
+          order: 1,
+        },
+      ],
+    })
+
+    await agent.post('/api/admin/languages/import').send(languages)
+    await agent.post('/api/admin/language-pairs/import').send(languagePairs)
+    expect((await agent.post('/api/admin/collections/import').send(collections('First name'))).status).toBe(
+      201
+    )
+    const counts = {
+      languages: await Language.countDocuments(),
+      pairs: await LanguagePair.countDocuments(),
+      groups: await CollectionGroup.countDocuments(),
+      collections: await Collection.countDocuments(),
+    }
+
+    expect((await agent.post('/api/admin/languages/import').send(languages)).status).toBe(201)
+    expect((await agent.post('/api/admin/language-pairs/import').send(languagePairs)).status).toBe(201)
+    const second = await agent.post('/api/admin/collections/import').send(collections('Renamed'))
+
+    expect(second.status).toBe(201)
+    expect(await Language.countDocuments()).toBe(counts.languages)
+    expect(await LanguagePair.countDocuments()).toBe(counts.pairs)
+    expect(await CollectionGroup.countDocuments()).toBe(counts.groups)
+    expect(await Collection.countDocuments()).toBe(counts.collections)
+    expect((await Collection.findOne({ slug: 'fast-track-level-1' }).orFail()).name).toBe('Renamed')
   })
 
   it('rejects language pair imports when a referenced language is missing', async () => {

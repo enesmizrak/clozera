@@ -102,32 +102,53 @@ const findLanguage = (identifier: string) =>
     )
   )
 
-export const importLanguages = (input: z.output<typeof languagesImportSchema>) =>
-  db(() => Language.insertMany(input.languages, { ordered: false }))
+const upsert = { returnDocument: 'after', upsert: true, setDefaultsOnInsert: true } as const
+
+export const importLanguages = Effect.fn('importLanguages')(function* (
+  input: z.output<typeof languagesImportSchema>
+) {
+  const languages = []
+  for (const language of input.languages) {
+    languages.push(
+      yield* db(() =>
+        Language.findOneAndUpdate(
+          { $or: [{ code: language.code }, { iso3: language.iso3 }] },
+          language,
+          upsert
+        )
+      )
+    )
+  }
+  return languages
+})
 
 export const importLanguagePairs = Effect.fn('importLanguagePairs')(function* (
   input: z.output<typeof languagePairsImportSchema>
 ) {
-  const created = []
+  const saved = []
   for (const pair of input.languagePairs) {
     const [targetLanguage, baseLanguage] = yield* Effect.all([
       findLanguage((pair.targetLanguageIso3 ?? pair.targetLanguageCode)!),
       findLanguage((pair.baseLanguageIso3 ?? pair.baseLanguageCode)!),
     ])
-    created.push(
+    saved.push(
       yield* db(() =>
-        LanguagePair.create({
-          slug: pair.slug,
-          name: pair.name,
-          active: pair.active,
-          totalSentences: pair.totalSentences,
-          targetLanguage: targetLanguage._id,
-          baseLanguage: baseLanguage._id,
-        })
+        LanguagePair.findOneAndUpdate(
+          { slug: pair.slug },
+          {
+            slug: pair.slug,
+            name: pair.name,
+            active: pair.active,
+            totalSentences: pair.totalSentences,
+            targetLanguage: targetLanguage._id,
+            baseLanguage: baseLanguage._id,
+          },
+          upsert
+        )
       )
     )
   }
-  return created
+  return saved
 })
 
 export const importCollections = Effect.fn('importCollections')(function* (
@@ -137,20 +158,36 @@ export const importCollections = Effect.fn('importCollections')(function* (
   const pair = yield* db(() => LanguagePair.findOne({ slug: input.languagePairSlug }))
   if (!pair) return yield* languagePairNotFound()
 
-  const groups = yield* db(() =>
-    CollectionGroup.insertMany(input.groups.map(group => ({ ...group, languagePair: pair._id })))
-  )
-  const groupByType = new Map(groups.map(group => [group.type, group._id]))
-  const collections = yield* db(() =>
-    Collection.insertMany(
-      input.collections.map(({ groupType, ...collection }) => ({
-        ...collection,
-        owner: owner._id,
-        languagePair: pair._id,
-        group: groupType ? (groupByType.get(groupType) ?? null) : null,
-      }))
+  const groups = []
+  for (const group of input.groups) {
+    groups.push(
+      yield* db(() =>
+        CollectionGroup.findOneAndUpdate(
+          { languagePair: pair._id, type: group.type },
+          { ...group, languagePair: pair._id },
+          upsert
+        )
+      )
     )
-  )
+  }
+  const groupByType = new Map(groups.map(group => [group.type, group._id]))
+  const collections = []
+  for (const { groupType, ...collection } of input.collections) {
+    collections.push(
+      yield* db(() =>
+        Collection.findOneAndUpdate(
+          { languagePair: pair._id, slug: collection.slug },
+          {
+            ...collection,
+            owner: owner._id,
+            languagePair: pair._id,
+            group: groupType ? (groupByType.get(groupType) ?? null) : null,
+          },
+          upsert
+        )
+      )
+    )
+  }
   return { groups, collections }
 })
 

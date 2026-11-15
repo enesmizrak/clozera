@@ -8,7 +8,7 @@ function isDuplicateKeyError(cause: unknown): cause is { code: 11000; keyValue?:
 
 function toAppError(cause: unknown): AppError {
   if (isDuplicateKeyError(cause)) {
-    const field = Object.keys(cause.keyValue ?? {})[0] ?? 'value'
+    const field = Object.keys(cause.keyValue ?? {}).at(-1) ?? 'value'
     return new Conflict({
       message: `This ${field} is already in use.`,
       details: [{ field, message: `This ${field} is already in use.` }],
