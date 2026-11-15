@@ -515,6 +515,49 @@ describe('collections integration', () => {
     expect(secondResponse.body.data.slug).toBe('travel-phrases-2')
   })
 
+  it('creates a collection named in Cyrillic', async () => {
+    await seedCollection()
+    const { agent } = await signUpAs(app, { username: 'ada', email: 'ada@example.com' })
+
+    const response = await agent.post('/api/collections').send({
+      languagePairSlug: 'deu-eng',
+      name: 'Глаголы движения',
+    })
+
+    expect(response.status).toBe(201)
+    expect(response.body.data.slug).toBe('глаголы-движения')
+  })
+
+  it('rejects a collection name without letters or numbers', async () => {
+    await seedCollection()
+    const { agent } = await signUpAs(app, { username: 'ada', email: 'ada@example.com' })
+
+    const response = await agent.post('/api/collections').send({
+      languagePairSlug: 'deu-eng',
+      name: '!!!',
+    })
+
+    expect(response.status).toBe(400)
+    expect(response.body.error.code).toBe('VALIDATION_ERROR')
+  })
+
+  it('creates a unique slug when another learner uses the same Cyrillic name', async () => {
+    await seedCollection()
+    const { agent: firstAgent } = await signUpAs(app, { username: 'ada', email: 'ada@example.com' })
+    const { agent: secondAgent } = await signUpAs(app, { username: 'grace', email: 'grace@example.com' })
+
+    const firstResponse = await firstAgent
+      .post('/api/collections')
+      .send({ languagePairSlug: 'deu-eng', name: 'Глаголы движения' })
+    const secondResponse = await secondAgent
+      .post('/api/collections')
+      .send({ languagePairSlug: 'deu-eng', name: 'Глаголы движения' })
+
+    expect(firstResponse.body.data.slug).toBe('глаголы-движения')
+    expect(secondResponse.status).toBe(201)
+    expect(secondResponse.body.data.slug).toBe('глаголы-движения-2')
+  })
+
   it('adds a sentence to an owned user collection', async () => {
     const { pair } = await seedCollection()
     const { agent, user } = await signUpAs(app, {

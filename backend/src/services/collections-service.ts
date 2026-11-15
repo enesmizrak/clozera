@@ -15,6 +15,7 @@ import { type AppError, Forbidden, NotFound, ValidationFailed, collectionNotFoun
 import { findActiveLanguagePair, resolveActiveLanguagePair } from '../lib/active-language-pair.ts'
 import { collectionAccessConditions, pinnedCollectionIds } from '../lib/collection-capabilities.ts'
 import { escapeRegex, objectId } from '../lib/ids.ts'
+import { slugify } from '../lib/slug.ts'
 import { serializeCollection, serializeSentence } from '../lib/serializers.ts'
 import { Collection, type CollectionDocument } from '../models/collection.ts'
 import { CollectionSentence } from '../models/collection-sentence.ts'
@@ -24,14 +25,6 @@ import { User, type UserDocument } from '../models/user.ts'
 const POPULATED_PATHS = ['languagePair', 'group', 'owner']
 
 const collectionId = (id: unknown) => objectId(id, collectionNotFound)
-
-function slugify(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
 
 function groupOrder(collection: CollectionDocument): number {
   const group = collection.group as unknown as CollectionGroupFields | null
@@ -132,21 +125,24 @@ export const createCollection = Effect.fn('createCollection')(function* (
   const pair = payload.languagePairSlug
     ? yield* findActiveLanguagePair(payload.languagePairSlug)
     : yield* resolveActiveLanguagePair(viewer)
-  const slug = yield* uniqueCollectionSlug(pair._id, baseSlug)
-
-  const collection = yield* db(() =>
-    Collection.create({
-      owner: viewer._id,
-      languagePair: pair._id,
-      name: payload.name,
-      slug,
-      description: payload.description,
-      type: payload.type,
-      level: payload.level,
-      isOfficial: false,
-      isPublic: payload.visibility === 'public',
-    })
-  )
+  const createWithSlug = Effect.gen(function* () {
+    const slug = yield* uniqueCollectionSlug(pair._id, baseSlug)
+    return yield* db(() =>
+      Collection.create({
+        owner: viewer._id,
+        languagePair: pair._id,
+        name: payload.name,
+        slug,
+        description: payload.description,
+        type: payload.type,
+        level: payload.level,
+        isOfficial: false,
+        isPublic: payload.visibility === 'public',
+      })
+    )
+  })
+  // Two concurrent creates can pick the same slug; retry once so the loser gets the next free one.
+  const collection = yield* createWithSlug.pipe(Effect.catchTag('Conflict', () => createWithSlug))
 
   // New My Collections are pinned to the creator's dashboard automatically.
   const updatedViewer = yield* db(() =>
