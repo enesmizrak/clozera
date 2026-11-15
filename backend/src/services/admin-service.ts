@@ -10,6 +10,7 @@ import { CollectionSentence } from '../models/collection-sentence.ts'
 import { Language } from '../models/language.ts'
 import { LanguagePair } from '../models/language-pair.ts'
 import type { UserDocument } from '../models/user.ts'
+import { nextSentenceOrder, refreshSentenceCount } from './collections-service.ts'
 
 /** Admin import payloads. Official content is owned by the importing admin. */
 export const languagesImportSchema = z.object({
@@ -162,6 +163,7 @@ export const importCollectionSentences = Effect.fn('importCollectionSentences')(
   const collection = yield* db(() => Collection.findById(_id))
   if (!collection) return yield* collectionNotFound()
 
+  const base = yield* nextSentenceOrder(collection._id)
   const documents: Array<ReturnType<typeof normalizeSentencePayload> & Record<string, unknown>> = []
   for (const [index, sentence] of input.sentences.entries()) {
     const normalized = normalizeSentencePayload(sentence)
@@ -176,14 +178,11 @@ export const importCollectionSentences = Effect.fn('importCollectionSentences')(
       ...normalized,
       owner: owner._id,
       collection: collection._id,
-      order: sentence.order ?? index,
+      order: base + (sentence.order ?? index),
     })
   }
 
   const created = yield* db(() => CollectionSentence.insertMany(documents))
-  collection.sentenceCount = yield* db(() =>
-    CollectionSentence.countDocuments({ collection: collection._id })
-  )
-  yield* db(() => collection.save())
+  yield* refreshSentenceCount(collection._id)
   return created
 })

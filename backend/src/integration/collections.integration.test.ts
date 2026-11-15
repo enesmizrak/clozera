@@ -593,6 +593,55 @@ describe('collections integration', () => {
     expect(updatedCollection.sentenceCount).toBe(1)
   })
 
+  it('appends a new sentence after existing ones even after a middle sentence was deleted', async () => {
+    const { pair } = await seedCollection()
+    const { agent, user } = await signUpAs(app, {
+      username: 'ada',
+      email: 'ada@example.com',
+    })
+    const collection = await Collection.create({
+      owner: user._id,
+      languagePair: pair._id,
+      name: 'My Practice',
+      slug: 'my-practice',
+      isOfficial: false,
+      isPublic: false,
+    })
+    const id = collection._id.toString()
+    const texts = ['Ich {{bin}} eins.', 'Ich {{bin}} zwei.', 'Ich {{bin}} drei.', 'Ich {{bin}} vier.']
+    const ids: string[] = []
+    for (const text of texts.slice(0, 3)) {
+      const created = await agent.post(`/api/collections/${id}/sentences`).send({
+        text,
+        translation: 'translation',
+        alternativeAnswers: [],
+        multipleChoiceOptions: [],
+      })
+      expect(created.status).toBe(201)
+      ids.push(created.body.data._id ?? created.body.data.id)
+    }
+
+    const deleted = await agent.delete(`/api/collections/${id}/sentences/${ids[1]}`)
+    expect(deleted.status).toBeLessThan(300)
+    const fourth = await agent.post(`/api/collections/${id}/sentences`).send({
+      text: texts[3],
+      translation: 'translation',
+      alternativeAnswers: [],
+      multipleChoiceOptions: [],
+    })
+    expect(fourth.status).toBe(201)
+
+    const listed = await agent.get(`/api/collections/${id}/sentences`)
+    expect(listed.status).toBe(200)
+    expect(listed.body.data.sentences.map((sentence: { text: string }) => sentence.text)).toEqual([
+      texts[0],
+      texts[2],
+      texts[3],
+    ])
+    const updated = await Collection.findById(collection._id).orFail()
+    expect(updated.sentenceCount).toBe(3)
+  })
+
   it('ignores posted cloze when adding a sentence', async () => {
     const { pair } = await seedCollection()
     const { agent, user } = await signUpAs(app, {

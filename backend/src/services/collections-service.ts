@@ -233,12 +233,19 @@ export const unpinCollection = Effect.fn('unpinCollection')(function* (id: unkno
   return collection ? serializeCollection(collection, updatedViewer) : null
 })
 
-function refreshSentenceCount(collection: CollectionDocument) {
+/** The order value that places a new sentence after every existing one. */
+export function nextSentenceOrder(collectionId: Types.ObjectId) {
+  return db(() =>
+    CollectionSentence.findOne({ collection: collectionId }, { order: 1 }).sort({ order: -1 }).lean()
+  ).pipe(Effect.map(last => (last?.order ?? -1) + 1))
+}
+
+/** Recounts sentences and writes only the count, so concurrent edits to other fields are not overwritten. */
+export function refreshSentenceCount(collectionId: Types.ObjectId) {
   return Effect.gen(function* () {
-    collection.sentenceCount = yield* db(() =>
-      CollectionSentence.countDocuments({ collection: collection._id })
-    )
-    yield* db(() => collection.save())
+    const sentenceCount = yield* db(() => CollectionSentence.countDocuments({ collection: collectionId }))
+    yield* db(() => Collection.updateOne({ _id: collectionId }, { $set: { sentenceCount } }))
+    return sentenceCount
   })
 }
 
@@ -248,15 +255,16 @@ export const createSentence = Effect.fn('createSentence')(function* (
   viewer: UserDocument
 ) {
   const collection = yield* findOwnedCollection(collectionIdValue, viewer)
+  const order = yield* nextSentenceOrder(collection._id)
   const sentence = yield* db(() =>
     CollectionSentence.create({
       ...payload,
       owner: viewer._id,
       collection: collection._id,
-      order: collection.sentenceCount,
+      order,
     })
   )
-  yield* refreshSentenceCount(collection)
+  yield* refreshSentenceCount(collection._id)
   return serializeSentence(sentence)
 })
 
@@ -285,7 +293,7 @@ export const deleteSentence = Effect.fn('deleteSentence')(function* (
   const _id = yield* objectId(sentenceId, () => new NotFound({ message: 'Sentence not found.' }))
   const result = yield* db(() => CollectionSentence.deleteOne({ _id, collection: collection._id }))
   if (result.deletedCount === 0) return yield* new NotFound({ message: 'Sentence not found.' })
-  yield* refreshSentenceCount(collection)
+  yield* refreshSentenceCount(collection._id)
 })
 
 export const listSentences = Effect.fn('listSentences')(function* (input: {

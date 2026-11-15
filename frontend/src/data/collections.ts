@@ -163,9 +163,13 @@ export async function createLearnerCollection(languagePair: string, input: Colle
   return created
 }
 
-/** Sentence counts are maintained by the API; refresh the collection row after sentence changes. */
+/** Sentence counts are maintained by the API. Refreshing the row is best effort: the change itself already succeeded. */
 async function refreshCollection(collection: CollectionDto) {
-  await libraryOf(collection).utils.writeUpsert(await api.collection(collection.id))
+  try {
+    await libraryOf(collection).utils.writeUpsert(await api.collection(collection.id))
+  } catch {
+    // The next library refetch corrects the count.
+  }
 }
 
 export async function addSentence(collection: CollectionDto, input: SentenceInput) {

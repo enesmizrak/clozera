@@ -266,6 +266,63 @@ describe('admin integration', () => {
     expect(await CollectionSentence.countDocuments()).toBe(0)
   })
 
+  it('appends imported sentences after existing ones', async () => {
+    const { agent, user } = await signUpAs(app, {
+      username: 'admin',
+      email: 'admin@example.com',
+      role: 'admin',
+    })
+    const language = await Language.create({
+      name: 'German',
+      nativeName: 'Deutsch',
+      code: 'de',
+      iso3: 'deu',
+      flagIso: 'de',
+    })
+    const baseLanguage = await Language.create({
+      name: 'English',
+      nativeName: 'English',
+      code: 'en',
+      iso3: 'eng',
+      flagIso: 'gb',
+    })
+    const pair = await LanguagePair.create({
+      targetLanguage: language._id,
+      baseLanguage: baseLanguage._id,
+      name: 'German from English',
+      slug: 'deu-eng',
+    })
+    const collection = await Collection.create({
+      owner: user._id,
+      languagePair: pair._id,
+      name: 'Fast Track Level 1',
+      slug: 'fast-track-level-1',
+    })
+    await CollectionSentence.create({
+      owner: user._id,
+      collection: collection._id,
+      text: 'Ich {{bin}} alt.',
+      translation: 'I am old.',
+      cloze: 'bin',
+      order: 5,
+    })
+
+    const response = await agent
+      .post(`/api/admin/collections/${collection._id.toString()}/sentences/import`)
+      .send({
+        sentences: [
+          { text: 'Ich {{bin}} hier.', translation: 'I am here.', cloze: 'bin' },
+          { text: 'Das ist {{gut}}.', translation: 'That is good.', cloze: 'gut' },
+        ],
+      })
+
+    expect(response.status).toBeLessThan(300)
+    const imported = await CollectionSentence.find({ collection: collection._id }).sort({ order: 1 })
+    expect(imported.map(sentence => sentence.order)).toEqual([5, 6, 7])
+    const updated = await Collection.findById(collection._id).orFail()
+    expect(updated.sentenceCount).toBe(3)
+  })
+
   it('rejects sentence imports with invalid cloze markers', async () => {
     const { agent, user } = await signUpAs(app, {
       username: 'admin',
