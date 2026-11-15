@@ -47,6 +47,21 @@ describe('practice session', () => {
     ])
   })
 
+  it('does not offer accepted alternative answers as distractors', () => {
+    const slots = choiceSlotsForSentence(
+      {
+        cloze: 'reise',
+        alternativeAnswers: ['Fahre'],
+        multipleChoiceOptions: ['fahre', 'koche', 'schlafe', 'lese'],
+      },
+      4,
+      () => 0.5
+    )
+    expect(slots.some(slot => slot.label.trim().toLocaleLowerCase() === 'fahre')).toBe(false)
+    expect(slots.filter(slot => slot.isCorrect)).toHaveLength(1)
+    expect(slots.filter(slot => !slot.disabled)).toHaveLength(4)
+  })
+
   it('accepts supported round sizes and falls back for invalid URL values', () => {
     expect(sessionLimitFromValue('5')).toBe(5)
     expect(sessionLimitFromValue('20')).toBe(20)

@@ -64,16 +64,18 @@ export interface ChoiceSlot {
 }
 
 export function choiceSlotsForSentence(
-  sentence: Pick<SentenceDto, 'cloze' | 'multipleChoiceOptions'> | undefined,
+  sentence:
+    | (Pick<SentenceDto, 'cloze' | 'multipleChoiceOptions'> &
+        Partial<Pick<SentenceDto, 'alternativeAnswers'>>)
+    | undefined,
   choiceCount = DEFAULT_CHOICE_COUNT,
   random: Random = Math.random
 ): ChoiceSlot[] {
   const correctAnswer = String(sentence?.cloze ?? '').trim()
+  const accepted = new Set([correctAnswer, ...(sentence?.alternativeAnswers ?? [])].map(normalizedAnswer))
   const uniqueOptions = new Set((sentence?.multipleChoiceOptions ?? []).map(option => option.trim()))
   const distractors = shuffledItems(
-    [...uniqueOptions].filter(
-      option => option && normalizedAnswer(option) !== normalizedAnswer(correctAnswer)
-    ),
+    [...uniqueOptions].filter(option => option && !accepted.has(normalizedAnswer(option))),
     random
   ).slice(0, Math.max(choiceCount - 1, 0))
   const activeOptions = shuffledItems([correctAnswer, ...distractors].filter(Boolean), random)
